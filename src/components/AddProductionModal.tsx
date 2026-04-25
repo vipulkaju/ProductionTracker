@@ -178,14 +178,20 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
           }
         } catch (error) {
           console.error("AI Scan error:", error);
+          alert("Could not read the sheet. Please make sure the photo is clear and try again.");
         } finally {
           setIsScanning(false);
           if (fileInputRef.current) fileInputRef.current.value = '';
         }
       };
+      reader.onerror = () => {
+        alert("Failed to read the file. Please try again.");
+        setIsScanning(false);
+      };
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("FileReader error:", error);
+      alert("An error occurred while opening the camera/gallery.");
       setIsScanning(false);
     }
   };
@@ -211,13 +217,6 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
               <div>
                 <h2 className="text-xl font-black text-slate-800 tracking-tight">New Entry</h2>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Machine: {machineId}</p>
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleScan} 
-                  accept="image/*" 
-                  className="hidden" 
-                />
               </div>
               <button 
                 onClick={onClose}
@@ -268,8 +267,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                   type="file" 
                   ref={fileInputRef} 
                   onChange={handleScan} 
-                  accept="image/*" 
-                  capture="environment"
+                  accept="image/*"
                   className="hidden" 
                 />
               </div>
