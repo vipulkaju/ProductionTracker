@@ -12,14 +12,19 @@ import {
   Clock,
   LayoutDashboard,
   Layers,
-  Ruler
+  Ruler,
+  Trash2,
+  Pencil
 } from 'lucide-react';
 import { formatDate, cn } from '../lib/utils';
 import { StatusBadge } from './StatusBadge';
 import { ProgressBar } from './ProgressBar';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { useFirebase } from '../context/FirebaseContext';
+import { collection, query, orderBy, onSnapshot, where, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { handleFirestoreError, OperationType } from '../lib/firestoreErrorHandler';
+import { EditProductionModal } from './EditProductionModal';
+import { ConfirmationModal } from './ConfirmationModal';
 
 interface MachineDetailProps {
   item: ProductionItem;
@@ -28,12 +33,20 @@ interface MachineDetailProps {
 }
 
 export function MachineDetail({ item, onBack }: MachineDetailProps) {
+  const { user } = useFirebase();
   const [logs, setLogs] = useState<ProductionRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editLog, setEditLog] = useState<ProductionRecord | null>(null);
+  const [logToDelete, setLogToDelete] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user) return;
     const logsRef = collection(db, 'machines', item.id, 'logs');
-    const q = query(logsRef, orderBy('createdAt', 'desc'));
+    const q = query(
+      logsRef, 
+      where('userId', '==', user.uid),
+      orderBy('createdAt', 'desc')
+    );
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedLogs: ProductionRecord[] = [];
@@ -47,7 +60,32 @@ export function MachineDetail({ item, onBack }: MachineDetailProps) {
     });
 
     return unsubscribe;
-  }, [item.id]);
+  }, [item.id, user]);
+
+  const handleDeleteLog = async () => {
+    if (!user || !logToDelete) return;
+    const path = `machines/${item.id}/logs/${logToDelete}`;
+    try {
+      await deleteDoc(doc(db, 'machines', item.id, 'logs', logToDelete));
+      setLogToDelete(null);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, path);
+    }
+  };
+
+  const handleUpdateLog = async (updatedRecord: ProductionRecord) => {
+    if (!user || !updatedRecord.id) return;
+    const path = `machines/${item.id}/logs/${updatedRecord.id}`;
+    try {
+      const logRef = doc(db, 'machines', item.id, 'logs', updatedRecord.id);
+      await updateDoc(logRef, {
+        ...updatedRecord,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, path);
+    }
+  };
 
   const logsByDate = useMemo(() => {
     const groups: Record<string, { DAY?: ProductionRecord; NIGHT?: ProductionRecord }> = {};
@@ -117,12 +155,16 @@ export function MachineDetail({ item, onBack }: MachineDetailProps) {
                     log={shifts.DAY} 
                     title="Day Shift"
                     accentColor="amber"
+                    onDelete={setLogToDelete}
+                    onEdit={setEditLog}
                   />
                   <ShiftSideCard 
                     shift="NIGHT" 
                     log={shifts.NIGHT} 
                     title="Night Shift"
                     accentColor="slate"
+                    onDelete={setLogToDelete}
+                    onEdit={setEditLog}
                   />
                 </div>
               </div>
@@ -138,6 +180,23 @@ export function MachineDetail({ item, onBack }: MachineDetailProps) {
           </div>
         )}
       </section>
+
+      <EditProductionModal 
+        isOpen={!!editLog} 
+        onClose={() => setEditLog(null)} 
+        record={editLog} 
+        onUpdate={handleUpdateLog} 
+      />
+
+      <ConfirmationModal
+        isOpen={!!logToDelete}
+        onClose={() => setLogToDelete(null)}
+        onConfirm={handleDeleteLog}
+        title="Delete Record?"
+        message="This action cannot be undone. Are you sure you want to delete this production entry?"
+        confirmText="Confirm Delete"
+        variant="danger"
+      />
     </motion.div>
   );
 }
@@ -147,9 +206,11 @@ interface ShiftSideCardProps {
   log?: ProductionRecord;
   title: string;
   accentColor: 'amber' | 'slate';
+  onDelete: (id: string) => void;
+  onEdit: (record: ProductionRecord) => void;
 }
 
-function ShiftSideCard({ shift, log, title, accentColor }: ShiftSideCardProps) {
+function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit }: ShiftSideCardProps) {
   if (!log) {
     return (
       <div className="bg-slate-50 border border-slate-100 rounded-[2rem] p-8 flex flex-col items-center justify-center text-center group transition-all opacity-40 grayscale">
@@ -187,9 +248,37 @@ function ShiftSideCard({ shift, log, title, accentColor }: ShiftSideCardProps) {
             </div>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-[8px] font-black uppercase tracking-tighter opacity-60">Design</p>
-          <p className="text-sm font-black uppercase tracking-tight">{log.designName}</p>
+        <div className="text-right flex flex-col items-end gap-2">
+          <div>
+            <p className="text-[8px] font-black uppercase tracking-tighter opacity-60">Design</p>
+            <p className="text-sm font-black uppercase tracking-tight">{log.designName}</p>
+          </div>
+          <div className="flex gap-2">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(log);
+              }}
+              className={cn(
+                "p-2 rounded-xl transition-all cursor-pointer",
+                isDay ? "bg-indigo-100 text-indigo-600 hover:bg-indigo-200" : "bg-slate-700 text-indigo-300 hover:bg-slate-600 hover:text-white"
+              )}
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                if (log.id) onDelete(log.id);
+              }}
+              className={cn(
+                "p-2 rounded-xl transition-all cursor-pointer",
+                isDay ? "bg-rose-100 text-rose-600 hover:bg-rose-200" : "bg-slate-800 text-rose-400 hover:bg-slate-700 hover:text-white"
+              )}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
