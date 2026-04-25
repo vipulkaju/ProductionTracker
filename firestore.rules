@@ -8,7 +8,7 @@ service cloud.firestore {
 
     // Helper Functions
     function isSignedIn() {
-      return request.auth != null && request.auth.token.email_verified == true;
+      return request.auth != null;
     }
 
     function isOwner(ownerId) {
@@ -62,24 +62,27 @@ service cloud.firestore {
       allow update: if isOwner(resource.data.get('ownerId', '')) && isValidMachine(incoming()) && 
                     incoming().ownerId == existing().ownerId &&
                     incoming().createdAt == existing().createdAt &&
-                    incoming().updatedAt == request.time;
+                    (incoming().get('updatedAt', request.time) == request.time);
       allow delete: if isOwner(resource.data.get('ownerId', ''));
 
       // Logs Subcollection
       match /logs/{logId} {
         // Master Gate: Verify machine ownership before log operations
-        allow get: if isOwner(get(/databases/$(database)/documents/machines/$(machineId)).data.get('ownerId', ''));
-        allow list: if isSignedIn() && resource.data.get('userId', '') == request.auth.uid;
-        allow create: if isOwner(get(/databases/$(database)/documents/machines/$(machineId)).data.get('ownerId', '')) && 
-                      isValidLog(incoming()) &&
-                      incoming().createdAt == request.time;
-        allow update: if isOwner(get(/databases/$(database)/documents/machines/$(machineId)).data.get('ownerId', '')) &&
+        // During create, we check if the authenticated user owns the parent machine
+        // During list/get/update/delete, we can use the stored userId in the log
+        allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+        allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+        allow create: if isSignedIn() && 
+                      isValidLog(incoming()) && 
+                      incoming().createdAt == request.time &&
+                      get(/databases/$(database)/documents/machines/$(machineId)).data.ownerId == request.auth.uid;
+        allow update: if isSignedIn() &&
                       isValidLog(incoming()) &&
                       incoming().userId == existing().userId &&
                       incoming().machineId == existing().machineId &&
                       incoming().createdAt == existing().createdAt &&
-                      incoming().updatedAt == request.time; 
-        allow delete: if isOwner(get(/databases/$(database)/documents/machines/$(machineId)).data.get('ownerId', ''));
+                      (incoming().get('updatedAt', request.time) == request.time);
+        allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       }
     }
   }

@@ -11,7 +11,12 @@ import {
   AlertCircle,
   CheckCircle2,
   LogIn,
-  LogOut
+  LogOut,
+  Trash2,
+  Zap,
+  Clock,
+  Timer,
+  MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductionItem, ProductionStatus, ProductionRecord } from './types';
@@ -19,6 +24,9 @@ import { MetricCard } from './components/MetricCard';
 import { ProductionCard } from './components/ProductionCard';
 import { AddMachineModal } from './components/AddMachineModal';
 import { MachineDetail } from './components/MachineDetail';
+import { WhatsAppReport } from './components/WhatsAppReport';
+import { ConfirmationModal } from './components/ConfirmationModal';
+import { EditMachineModal } from './components/EditMachineModal';
 import { cn } from './lib/utils';
 import { useFirebase } from './context/FirebaseContext';
 import { 
@@ -44,6 +52,9 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [itemToDelete, setItemToDelete] = useState<ProductionItem | null>(null);
+  const [itemToEdit, setItemToEdit] = useState<ProductionItem | null>(null);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'whatsapp'>('dashboard');
 
   useEffect(() => {
     if (!user) {
@@ -55,8 +66,25 @@ export default function App() {
     const q = query(collection(db, 'machines'), where('ownerId', '==', user.uid));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const machines: ProductionItem[] = [];
-      snapshot.forEach((doc) => {
-        machines.push({ ...doc.data() as ProductionItem, id: doc.id });
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data() as ProductionItem;
+        const machine = { ...data, id: docSnap.id };
+        
+        // One-time data correction for MCH-1 requested by user
+        if (machine.id === 'MCH-1' && machine.machineArea === '250' && machine.machineHead !== '39') {
+          const newHead = '39';
+          const areaNum = parseFloat(machine.machineArea) || 0;
+          const headNum = parseFloat(newHead) || 0;
+          const newFrameMeters = Number(((headNum * areaNum) / 1000).toFixed(4));
+          
+          updateDoc(doc(db, 'machines', 'MCH-1'), {
+            machineHead: newHead,
+            frameMeters: newFrameMeters,
+            updatedAt: serverTimestamp()
+          }).catch(err => console.error("Failed to auto-update MCH-1:", err));
+        }
+
+        machines.push(machine);
       });
       setItems(machines);
       setIsInitialLoading(false);
@@ -105,13 +133,33 @@ export default function App() {
     }
   };
 
-  const handleDeleteItem = async (id: string) => {
-    if (!user) return;
-    const path = `machines/${id}`;
+  const handleDeleteItem = async () => {
+    if (!user || !itemToDelete) return;
+    const path = `machines/${itemToDelete.id}`;
     try {
-      await deleteDoc(doc(db, 'machines', id));
+      await deleteDoc(doc(db, 'machines', itemToDelete.id));
+      setItemToDelete(null);
     } catch (error) {
       handleFirestoreError(error, OperationType.DELETE, path);
+    }
+  };
+
+  const handleUpdateMachine = async (updatedItem: ProductionItem) => {
+    if (!user) return;
+    const path = `machines/${updatedItem.id}`;
+    try {
+      const machineRef = doc(db, 'machines', updatedItem.id);
+      await updateDoc(machineRef, {
+        name: updatedItem.name,
+        category: updatedItem.category,
+        machineHead: updatedItem.machineHead,
+        machineArea: updatedItem.machineArea,
+        frameMeters: updatedItem.frameMeters,
+        status: updatedItem.status,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, path);
     }
   };
 
@@ -203,6 +251,28 @@ export default function App() {
           </div>
         </div>
         <div className="flex items-center gap-4 sm:gap-6">
+          <div className="hidden sm:flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+            <button 
+              onClick={() => { setCurrentView('dashboard'); setSelectedMachineId(null); }}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                currentView === 'dashboard' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              )}
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span>Dashboard</span>
+            </button>
+            <button 
+              onClick={() => { setCurrentView('whatsapp'); setSelectedMachineId(null); }}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                currentView === 'whatsapp' ? "bg-white text-emerald-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              )}
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              <span>WhatsApp</span>
+            </button>
+          </div>
           <button 
             onClick={logout}
             className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors text-[10px] font-bold uppercase tracking-wider"
@@ -230,6 +300,14 @@ export default function App() {
                 key="detail"
                 item={selectedMachine} 
                 onBack={() => setSelectedMachineId(null)} 
+                onAddProduction={handleAddProduction}
+                onDeleteMachine={() => setItemToDelete(selectedMachine)}
+              />
+            ) : currentView === 'whatsapp' ? (
+              <WhatsAppReport 
+                key="whatsapp"
+                onBack={() => setCurrentView('dashboard')}
+                user={user}
               />
             ) : (
               <motion.div 
@@ -242,24 +320,17 @@ export default function App() {
                 {/* Lines Status Overview */}
                 <section className="space-y-6">
                   <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Live Lines</h3>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1">
+                        <FilterButton active={filter === "ALL"} onClick={() => setFilter("ALL")}>Machine</FilterButton>
+                      </div>
                       <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm cursor-pointer text-[10px] font-bold uppercase tracking-wider"
+                        className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl hover:bg-indigo-600 transition-all font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-200"
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-4 h-4" />
                         <span>Add Machine</span>
                       </button>
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1">
-                        <FilterButton active={filter === "ALL"} onClick={() => setFilter("ALL")}>All</FilterButton>
-                        <FilterButton active={filter === "IN_PROGRESS"} onClick={() => setFilter("IN_PROGRESS")}>Running</FilterButton>
-                        <FilterButton active={filter === "DELAYED"} onClick={() => setFilter("DELAYED")}>Alerts</FilterButton>
-                        <FilterButton active={filter === "QUALITY_CHECK"} onClick={() => setFilter("QUALITY_CHECK")}>Inspect</FilterButton>
-                      </div>
                     </div>
                   </div>
 
@@ -270,13 +341,14 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 pb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-6 pb-8">
                       <AnimatePresence>
                         {filteredItems.map((item) => (
                           <ProductionCard 
                             key={item.id} 
                             item={item} 
-                            onDelete={handleDeleteItem} 
+                            onDelete={() => setItemToDelete(item)} 
+                            onEdit={() => setItemToEdit(item)}
                             onAddProduction={handleAddProduction}
                             onClick={() => setSelectedMachineId(item.id)}
                           />
@@ -300,7 +372,160 @@ export default function App() {
           </AnimatePresence>
         </main>
       </div>
+
+      <ConfirmationModal
+        isOpen={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={handleDeleteItem}
+        title="Delete Machine?"
+        message={`Are you sure you want to delete ${itemToDelete?.name}? This will permanently remove all production history for this machine.`}
+        confirmText="Confirm Delete"
+        variant="danger"
+      />
+
+      <EditMachineModal
+        isOpen={!!itemToEdit}
+        onClose={() => setItemToEdit(null)}
+        item={itemToEdit}
+        onUpdate={handleUpdateMachine}
+      />
+
+      {/* Mobile Floating Actions */}
+      {!selectedMachineId && (
+        <MobileNavigation 
+          currentFilter={filter}
+          onFilterChange={setFilter}
+          onAdd={() => setIsModalOpen(true)}
+          onLogout={logout}
+          currentView={currentView}
+          onViewChange={setCurrentView}
+        />
+      )}
     </div>
+  );
+}
+
+function MobileNavigation({ currentFilter, onFilterChange, onAdd, onLogout, currentView, onViewChange }: { 
+  currentFilter: ProductionStatus | "ALL", 
+  onFilterChange: (f: ProductionStatus | "ALL") => void,
+  onAdd: () => void,
+  onLogout: () => void,
+  currentView: 'dashboard' | 'whatsapp',
+  onViewChange: (v: 'dashboard' | 'whatsapp') => void
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="sm:hidden fixed bottom-6 right-6 z-[60] flex flex-col items-end gap-4">
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[59]"
+            />
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              className="absolute bottom-20 right-0 w-64 bg-white rounded-3xl shadow-2xl overflow-hidden z-[60] border border-slate-200"
+            >
+              <div className="p-4 space-y-4">
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Navigation</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    <button 
+                      onClick={() => { onViewChange('dashboard'); setIsOpen(false); }}
+                      className={cn(
+                        "w-full flex items-center gap-3 p-3 rounded-2xl font-bold text-sm",
+                        currentView === 'dashboard' ? "bg-indigo-50 text-indigo-600" : "bg-slate-50 text-slate-600"
+                      )}
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      <span>Dashboard</span>
+                    </button>
+                    <button 
+                      onClick={() => { onViewChange('whatsapp'); setIsOpen(false); }}
+                      className={cn(
+                        "w-full flex items-center gap-3 p-3 rounded-2xl font-bold text-sm",
+                        currentView === 'whatsapp' ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-600"
+                      )}
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>WhatsApp Report</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Actions</p>
+                  <button 
+                    onClick={() => { onAdd(); setIsOpen(false); }}
+                    className="w-full flex items-center gap-3 p-3 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Machine</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Quick Filters</p>
+                  <div className="grid grid-cols-1">
+                    <FilterOption active={currentFilter === "ALL"} onClick={() => { onFilterChange("ALL"); setIsOpen(false); }}>All Machines</FilterOption>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Account</p>
+                  <button 
+                    onClick={() => { onLogout(); setIsOpen(false); }}
+                    className="w-full flex items-center gap-3 p-3 bg-slate-50 text-slate-600 rounded-2xl font-bold text-sm"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-colors z-[61] relative",
+          isOpen ? "bg-slate-900 text-white" : "bg-indigo-600 text-white"
+        )}
+      >
+        <motion.div
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={{ type: "spring", damping: 12 }}
+        >
+          <Plus className="w-7 h-7" />
+        </motion.div>
+      </motion.button>
+    </div>
+  );
+}
+
+function FilterOption({ children, active, onClick }: { children: React.ReactNode, active: boolean, onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={cn(
+        "p-2.5 rounded-xl text-[11px] font-black uppercase tracking-tight transition-all text-left",
+        active 
+          ? "bg-slate-900 text-white" 
+          : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+      )}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -337,3 +562,4 @@ function FilterButton({ children, active, onClick }: { children: React.ReactNode
     </button>
   );
 }
+

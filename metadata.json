@@ -1,6 +1,6 @@
 {
   "name": "ProductionTracker",
-  "description": "A streamlined dashboard for monitoring manufacturing workflows, tracking production stages, and managing operational efficiency.",
+  "description": "A streamlined dashboard for monitoring manufacturing workflows, tracking production stages, and managing operational efficiency with daily WhatsApp reporting.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
