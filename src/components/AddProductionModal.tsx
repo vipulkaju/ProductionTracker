@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Plus, User, Hash, Clock, FileText, Activity, Camera, Loader2, Calendar } from 'lucide-react';
+import { X, Plus, User, Hash, Clock, FileText, Activity, Calendar } from 'lucide-react';
 import { ProductionRecord } from '../types';
-import { GoogleGenAI, Type } from "@google/genai";
 import { cn } from '../lib/utils';
 
 interface AddProductionModalProps {
@@ -14,8 +13,6 @@ interface AddProductionModalProps {
 }
 
 export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMeters }: AddProductionModalProps) {
-  const [isScanning, setIsScanning] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const getYesterdayDate = () => {
     const d = new Date();
     d.setDate(d.getDate() - 1);
@@ -87,115 +84,6 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
     }
   };
 
-  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsScanning(true);
-    try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Data = (reader.result as string).split(',')[1];
-        
-        try {
-          const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-          
-          const prompt = `Extract production data from this hand-written sheet image.
-          Look for these specific columns and labels:
-          - "દીન પાલી" (Din Pali) for Day Shift.
-          - "રાત પાલી" (Rat Pali) for Night Shift.
-          - "તારીખ" (Date) - Extract in YYYY-MM-DD format.
-          - "ઓપરેટર કા નામ" - Name of the person working.
-          - "ડિ.નંબર" (Design Number) - This is the Design Name (e.g., 21).
-          - "કુલ નંગ" or the bottom total in the frame column - This is the Frame count (e.g., 27).
-          - "કુલ સ્ટીચ" (Kul Stitch) - The large number for total stitches (e.g., 228577).
-          - "વર્ક નામ" (Work Name) - Types like Pallu, Skirt.
-
-          Return a JSON object with a "date" field and a "shifts" array (DAY and NIGHT).
-          Each shift object MUST have: "shift", "operatorName", "designName" (from ડિ.નંબર), "designStitch" (number), "frame" (number, usually from the bottom total), "totalMeters" (number), "totalStitches" (from કુલ સ્ટીચ).`;
-
-          const response = await ai.models.generateContent({
-            model: "gemini-3-flash-preview",
-            contents: {
-              parts: [
-                { inlineData: { data: base64Data, mimeType: file.type } },
-                { text: prompt }
-              ]
-            },
-            config: {
-              responseMimeType: "application/json",
-              responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                  date: { type: Type.STRING, description: "Date in YYYY-MM-DD format" },
-                  shifts: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.OBJECT,
-                      properties: {
-                        shift: { type: Type.STRING, enum: ["DAY", "NIGHT"] },
-                        operatorName: { type: Type.STRING },
-                        designName: { type: Type.STRING },
-                        designStitch: { type: Type.NUMBER },
-                        frame: { type: Type.NUMBER },
-                        totalMeters: { type: Type.NUMBER },
-                        totalStitches: { type: Type.NUMBER },
-                      },
-                      required: ["shift"]
-                    }
-                  }
-                }
-              }
-            }
-          });
-
-          const text = response.text;
-          
-          if (text) {
-            const result = JSON.parse(text.trim());
-            if (result.date) setProductionDate(result.date);
-            
-            if (Array.isArray(result.shifts)) {
-              setShiftsData(prev => {
-                const newData = { ...prev };
-                result.shifts.forEach((s: any) => {
-                  const shiftKey = s.shift === 'NIGHT' ? 'NIGHT' : 'DAY';
-                  const frameCount = Number(s.frame) || 0;
-                  const calculatedMeters = frameMeters ? Number((frameCount * frameMeters).toFixed(2)) : (Number(s.totalMeters) || 0);
-
-                  newData[shiftKey] = {
-                    operatorName: s.operatorName || '',
-                    designName: s.designName || '',
-                    designStitch: Number(s.designStitch) || 0,
-                    frame: frameCount,
-                    totalMeters: calculatedMeters,
-                    totalStitches: Number(s.totalStitches) || 0,
-                  };
-                });
-                return newData;
-              });
-            }
-          }
-        } catch (error) {
-          console.error("AI Scan error:", error);
-          alert("Could not read the sheet. Please make sure the photo is clear and try again.");
-        } finally {
-          setIsScanning(false);
-          if (fileInputRef.current) fileInputRef.current.value = '';
-        }
-      };
-      reader.onerror = () => {
-        alert("Failed to read the file. Please try again.");
-        setIsScanning(false);
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error("FileReader error:", error);
-      alert("An error occurred while opening the camera/gallery.");
-      setIsScanning(false);
-    }
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -227,51 +115,6 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
             </div>
 
             <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto scrollbar-hide">
-              {/* AI Scan Action */}
-              <div 
-                onClick={() => !isScanning && fileInputRef.current?.click()}
-                className={cn(
-                  "relative group cursor-pointer border-2 border-dashed rounded-3xl p-4 sm:p-6 transition-all overflow-hidden",
-                  isScanning ? "bg-slate-50 border-slate-200" : "bg-indigo-50/30 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50/50"
-                )}
-              >
-                {isScanning && (
-                  <div className="absolute inset-0 pointer-events-none z-20">
-                    <motion.div 
-                      initial={{ top: "-10%" }}
-                      animate={{ top: "110%" }}
-                      transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                      className="absolute left-0 right-0 h-1 bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.8)] z-30"
-                    />
-                    <div className="absolute inset-0 bg-indigo-500/5 animate-pulse" />
-                  </div>
-                )}
-                
-                <div className="flex items-center gap-4 relative z-10">
-                  <div className={cn(
-                    "p-3 sm:p-4 rounded-2xl shadow-sm transition-all shrink-0",
-                    isScanning ? "bg-white text-indigo-600 animate-pulse" : "bg-white text-indigo-600 group-hover:scale-110 group-hover:rotate-3 shadow-indigo-100"
-                  )}>
-                    {isScanning ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Camera className="w-5 h-5 sm:w-6 sm:h-6" />}
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs sm:text-sm font-black text-slate-800 tracking-tight uppercase">
-                      {isScanning ? 'AI Scanning...' : 'Scan Sheet'}
-                    </p>
-                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                      {isScanning ? 'Extracting shift data' : 'Take photo or upload'}
-                    </p>
-                  </div>
-                </div>
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleScan} 
-                  accept="image/*"
-                  className="hidden" 
-                />
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <FormGroup label="Production Date" icon={Calendar}>

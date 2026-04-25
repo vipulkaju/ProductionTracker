@@ -1,33 +1,71 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Activity, 
   BarChart3, 
   Box, 
-  Clock, 
   Filter, 
   LayoutDashboard, 
   Plus, 
-  Search, 
   Settings, 
   TrendingUp,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { INITIAL_DATA } from './constants';
 import { ProductionItem, ProductionStatus, ProductionRecord } from './types';
 import { MetricCard } from './components/MetricCard';
 import { ProductionCard } from './components/ProductionCard';
 import { AddMachineModal } from './components/AddMachineModal';
 import { MachineDetail } from './components/MachineDetail';
 import { cn } from './lib/utils';
+import { useFirebase } from './context/FirebaseContext';
+import { 
+  collection, 
+  query, 
+  where, 
+  onSnapshot, 
+  setDoc, 
+  doc, 
+  deleteDoc, 
+  updateDoc, 
+  serverTimestamp,
+  addDoc,
+  getDoc
+} from 'firebase/firestore';
+import { db } from './lib/firebase';
+import { handleFirestoreError, OperationType } from './lib/firestoreErrorHandler';
 
 export default function App() {
-  const [items, setItems] = useState<ProductionItem[]>(INITIAL_DATA);
-  const [search, setSearch] = useState("");
+  const { user, loading, login, logout } = useFirebase();
+  const [items, setItems] = useState<ProductionItem[]>([]);
   const [filter, setFilter] = useState<ProductionStatus | "ALL">("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      setItems([]);
+      setIsInitialLoading(false);
+      return;
+    }
+
+    const q = query(collection(db, 'machines'), where('ownerId', '==', user.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const machines: ProductionItem[] = [];
+      snapshot.forEach((doc) => {
+        machines.push({ ...doc.data() as ProductionItem, id: doc.id });
+      });
+      setItems(machines);
+      setIsInitialLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'machines');
+    });
+
+    return unsubscribe;
+  }, [user]);
 
   const metrics = useMemo(() => {
     const total = items.length;
@@ -45,45 +83,106 @@ export default function App() {
 
   const filteredItems = useMemo(() => {
     return items.filter(item => {
-      const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase()) || 
-                            item.id.toLowerCase().includes(search.toLowerCase());
       const matchesFilter = filter === "ALL" || item.status === filter;
-      return matchesSearch && matchesFilter;
+      return matchesFilter;
     });
-  }, [items, search, filter]);
+  }, [items, filter]);
 
-  const handleAddItem = (newItem: ProductionItem) => {
-    setItems(prev => {
-      if (prev.some(item => item.id === newItem.id)) {
-        // If ID exists, generate a new one
-        return [{ ...newItem, id: `${newItem.id}-1` }, ...prev];
-      }
-      return [newItem, ...prev];
-    });
+  const handleAddItem = async (newItem: ProductionItem) => {
+    if (!user) return;
+    const machineId = newItem.id || Math.random().toString(36).slice(2, 9);
+    const path = `machines/${machineId}`;
+    try {
+      await setDoc(doc(db, 'machines', machineId), {
+        ...newItem,
+        id: machineId,
+        ownerId: user.uid,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, path);
+    }
   };
 
-  const handleDeleteItem = (id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id));
+  const handleDeleteItem = async (id: string) => {
+    if (!user) return;
+    const path = `machines/${id}`;
+    try {
+      await deleteDoc(doc(db, 'machines', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, path);
+    }
   };
 
-  const handleAddProduction = (machineId: string, record: ProductionRecord) => {
-    setItems(prev => prev.map(item => {
-      if (item.id === machineId) {
-        const logs = item.productionLogs || [];
-        return {
-          ...item,
-          productionLogs: [record, ...logs],
-          // Update some metrics if needed
-          progress: Math.min(100, item.progress + 5)
-        };
+  const handleAddProduction = async (machineId: string, record: ProductionRecord) => {
+    if (!user) return;
+    const path = `machines/${machineId}/logs`;
+    try {
+      // Add log to subcollection
+      await addDoc(collection(db, 'machines', machineId, 'logs'), {
+        ...record,
+        userId: user.uid,
+        createdAt: serverTimestamp(),
+      });
+
+      // Update machine progress (simulation of business logic)
+      const machineRef = doc(db, 'machines', machineId);
+      const machineSnap = await getDoc(machineRef);
+      if (machineSnap.exists()) {
+        const currentProgress = machineSnap.data().progress || 0;
+        await updateDoc(machineRef, {
+          progress: Math.min(100, currentProgress + 5),
+          updatedAt: serverTimestamp()
+        });
       }
-      return item;
-    }));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, path);
+    }
   };
 
   const selectedMachine = useMemo(() => {
     return items.find(i => i.id === selectedMachineId) || null;
   }, [items, selectedMachineId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Loading PT System...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center space-y-8 border border-slate-200"
+        >
+          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-indigo-200">
+            <Box className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">PT PRODUCTION TRACKER</h1>
+            <p className="text-slate-500 mt-2 font-medium">Please sign in to access your dashboard</p>
+          </div>
+          <button 
+            onClick={login}
+            className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all shadow-lg hover:shadow-slate-200 active:scale-[0.98]"
+          >
+            <LogIn className="w-5 h-5" />
+            <span>Connect with Google</span>
+          </button>
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Secure AES-256 Authentication</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col transition-all">
@@ -104,12 +203,19 @@ export default function App() {
           </div>
         </div>
         <div className="flex items-center gap-4 sm:gap-6">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold">Shift: Morning (A)</p>
-            <p className="text-[10px] text-emerald-600 font-bold uppercase">06:00 — 14:00 • In Progress</p>
-          </div>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs ring-2 ring-indigo-50/50">
-            VR
+          <button 
+            onClick={logout}
+            className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors text-[10px] font-bold uppercase tracking-wider"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Sign Out</span>
+          </button>
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center transition-transform hover:scale-105">
+            {user.photoURL ? (
+              <img src={user.photoURL} alt={user.displayName || 'User'} className="w-full h-full rounded-full object-cover" />
+            ) : (
+              <span className="text-slate-400 font-bold text-xs">{(user.displayName || 'U').charAt(0)}</span>
+            )}
           </div>
         </div>
       </header>
@@ -133,13 +239,6 @@ export default function App() {
                 exit={{ opacity: 0 }}
                 className="space-y-8"
               >
-                {/* Stats Section */}
-                <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                  {metrics.map((m, idx) => (
-                    <MetricCard key={idx} {...m as any} />
-                  ))}
-                </section>
-
                 {/* Lines Status Overview */}
                 <section className="space-y-6">
                   <div className="flex flex-col gap-4">
@@ -155,16 +254,6 @@ export default function App() {
                     </div>
                     
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                      <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                        <input 
-                          type="text" 
-                          placeholder="Quick search..." 
-                          className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                        />
-                      </div>
                       <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1">
                         <FilterButton active={filter === "ALL"} onClick={() => setFilter("ALL")}>All</FilterButton>
                         <FilterButton active={filter === "IN_PROGRESS"} onClick={() => setFilter("IN_PROGRESS")}>Running</FilterButton>
@@ -174,21 +263,29 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 pb-8">
-                    <AnimatePresence mode="popLayout">
-                      {filteredItems.map((item) => (
-                        <ProductionCard 
-                          key={item.id} 
-                          item={item} 
-                          onDelete={handleDeleteItem} 
-                          onAddProduction={handleAddProduction}
-                          onClick={() => setSelectedMachineId(item.id)}
-                        />
+                  {isInitialLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="h-64 bg-white rounded-3xl border border-slate-200 animate-pulse" />
                       ))}
-                    </AnimatePresence>
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 pb-8">
+                      <AnimatePresence>
+                        {filteredItems.map((item) => (
+                          <ProductionCard 
+                            key={item.id} 
+                            item={item} 
+                            onDelete={handleDeleteItem} 
+                            onAddProduction={handleAddProduction}
+                            onClick={() => setSelectedMachineId(item.id)}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  )}
 
-                  {filteredItems.length === 0 && (
+                  {!isInitialLoading && filteredItems.length === 0 && (
                     <div className="py-20 bg-white border border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center text-center">
                       <div className="p-4 bg-slate-50 rounded-full mb-4">
                         <Activity className="w-8 h-8 text-slate-300" />
@@ -202,74 +299,7 @@ export default function App() {
             )}
           </AnimatePresence>
         </main>
-
-        {/* Action/Activities Sidebar */}
-        <aside className="w-72 bg-slate-900 hidden h-full lg:flex flex-col p-6 shadow-2xl z-40 transition-all border-l border-slate-800">
-          <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-8">System Activity Stream</h3>
-          
-          <div className="space-y-8 flex-1 overflow-y-auto scrollbar-hide pr-2">
-            <ActivityItem 
-              time="08:30 AM" 
-              title="Target Sync" 
-              desc="Line 01 throughput target increased by system." 
-              type="info" 
-            />
-            <ActivityItem 
-              time="08:12 AM" 
-              title="Critical Stall" 
-              desc="Emergency Stop triggered on Component Line 04." 
-              type="alert" 
-            />
-            <ActivityItem 
-              time="07:55 AM" 
-              title="Staff Shift" 
-              desc="Morning safety briefing completed and logged." 
-              type="success" 
-            />
-            <ActivityItem 
-              time="06:00 AM" 
-              title="Sequence Start" 
-              desc="Shift Alpha operational. Initial systems healthy." 
-              type="neutral" 
-            />
-          </div>
-
-          <div className="mt-8 pt-8 border-t border-slate-800">
-            <div className="bg-slate-800/50 rounded-2xl p-4 border border-slate-800">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cloud Sync</span>
-                <span className="text-[10px] font-bold text-emerald-400 uppercase">Secured</span>
-              </div>
-              <div className="flex gap-1.5 h-4 items-end">
-                {[...Array(12)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={cn(
-                      "flex-1 rounded-full",
-                      i === 10 ? "bg-amber-500 h-[60%]" : "bg-emerald-500",
-                      i % 3 === 0 ? "h-full" : i % 2 === 0 ? "h-[70%]" : "h-[85%]"
-                    )} 
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </aside>
       </div>
-
-      {/* Global Footer */}
-      <footer className="shrink-0 bg-white border-t border-slate-200 px-8 py-2.5 flex justify-between items-center z-50">
-        <div className="flex items-center gap-6">
-          <span className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500">
-            <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse shadow-[0_0_8px_rgba(79,70,229,0.5)]"></span>
-            NETWORK: PT-SECURE-NODE
-          </span>
-          <span className="text-[10px] font-bold text-slate-300 tracking-widest uppercase hidden md:inline">ENCRYPTION: AES-256</span>
-        </div>
-        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
-          {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} | SYSTEM LOGGED: PT-998
-        </div>
-      </footer>
     </div>
   );
 }

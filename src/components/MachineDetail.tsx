@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { ProductionItem, ProductionRecord } from '../types';
 import { motion } from 'motion/react';
 import { 
@@ -17,6 +17,9 @@ import {
 import { formatDate, cn } from '../lib/utils';
 import { StatusBadge } from './StatusBadge';
 import { ProgressBar } from './ProgressBar';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { handleFirestoreError, OperationType } from '../lib/firestoreErrorHandler';
 
 interface MachineDetailProps {
   item: ProductionItem;
@@ -25,7 +28,26 @@ interface MachineDetailProps {
 }
 
 export function MachineDetail({ item, onBack }: MachineDetailProps) {
-  const logs = item.productionLogs || [];
+  const [logs, setLogs] = useState<ProductionRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const logsRef = collection(db, 'machines', item.id, 'logs');
+    const q = query(logsRef, orderBy('createdAt', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedLogs: ProductionRecord[] = [];
+      snapshot.forEach(doc => {
+        fetchedLogs.push({ ...doc.data() as ProductionRecord, id: doc.id });
+      });
+      setLogs(fetchedLogs);
+      setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, `machines/${item.id}/logs`);
+    });
+
+    return unsubscribe;
+  }, [item.id]);
 
   const logsByDate = useMemo(() => {
     const groups: Record<string, { DAY?: ProductionRecord; NIGHT?: ProductionRecord }> = {};
@@ -63,66 +85,22 @@ export function MachineDetail({ item, onBack }: MachineDetailProps) {
         </div>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-indigo-600">
-              <LayoutDashboard className="w-4 h-4 sm:w-5 h-5" />
-            </div>
-            <StatusBadge status={item.status} />
-          </div>
-          <div>
-            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Production Progress</p>
-            <div className="flex justify-between items-end mb-2">
-              <span className="text-xl sm:text-2xl font-black text-slate-800">{item.progress}%</span>
-              <span className="text-[10px] font-bold text-slate-400">Target Reached</span>
-            </div>
-            <ProgressBar progress={item.progress} status={item.status} />
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm space-y-4">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-emerald-600">
-            <Activity className="w-4 h-4 sm:w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Logs</p>
-            <div className="flex justify-between items-end">
-              <span className="text-xl sm:text-2xl font-black text-slate-800">{logs.length}</span>
-              <span className="text-[10px] font-bold text-emerald-600">Active Entries</span>
-            </div>
-            <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-wide">Machine Head: {item.machineHead || 'N/A'}</p>
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm space-y-4 sm:col-span-2 lg:col-span-1">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-amber-600">
-            <Calendar className="w-4 h-4 sm:w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Schedule</p>
-            <div className="flex justify-between items-end">
-              <div className="space-y-0.5">
-                <span className="block text-[10px] sm:text-xs font-black text-slate-800 uppercase">Started: {formatDate(item.startDate)}</span>
-                <span className="block text-[10px] sm:text-xs font-black text-rose-600 uppercase">Due: {formatDate(item.dueDate)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Production History Section */}
       <section className="space-y-6 sm:space-y-8">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="p-1.5 sm:p-2 bg-indigo-600 text-white rounded-lg sm:rounded-xl">
             <FileText className="w-3.5 h-3.5 sm:w-4 h-4" />
           </div>
-          <h3 className="text-xs sm:text-base font-black text-slate-800 uppercase tracking-tight">History (હિસાબ)</h3>
+          <h3 className="text-xs sm:text-base font-black text-slate-800 uppercase tracking-tight">History</h3>
           <div className="flex-1 h-px bg-slate-200 ml-2" />
         </div>
 
-        {logsByDate.length > 0 ? (
+        {loading ? (
+          <div className="py-20 flex flex-col items-center justify-center text-center">
+            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Loading Logs...</p>
+          </div>
+        ) : logsByDate.length > 0 ? (
           <div className="space-y-12">
             {logsByDate.map(([date, shifts]) => (
               <div key={date} className="space-y-6">
@@ -137,13 +115,13 @@ export function MachineDetail({ item, onBack }: MachineDetailProps) {
                   <ShiftSideCard 
                     shift="DAY" 
                     log={shifts.DAY} 
-                    title="Day Shift (દિવસ)"
+                    title="Day Shift"
                     accentColor="amber"
                   />
                   <ShiftSideCard 
                     shift="NIGHT" 
                     log={shifts.NIGHT} 
-                    title="Night Shift (રાત)"
+                    title="Night Shift"
                     accentColor="slate"
                   />
                 </div>

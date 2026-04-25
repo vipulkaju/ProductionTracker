@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "Machine": {
+      "title": "Machine",
+      "description": "Represents a manufacturing machine or production line.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "quantity": { "type": "number" },
+        "status": { "type": "string", "enum": ["QUEUED", "IN_PROGRESS", "QUALITY_CHECK", "COMPLETED", "DELAYED"] },
+        "priority": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "startDate": { "type": "string", "format": "date-time" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "progress": { "type": "number", "description": "0 to 100" },
+        "assignedTo": { "type": "string" },
+        "machineHead": { "type": "string" },
+        "machineArea": { "type": "string" },
+        "frameMeters": { "type": "number" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "status"]
+    },
+    "ProductionRecord": {
+      "title": "Production Record",
+      "description": "Represents a specific production shift log for a machine.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "shift": { "type": "string", "enum": ["DAY", "NIGHT"] },
+        "machineId": { "type": "string" },
+        "operatorName": { "type": "string" },
+        "designName": { "type": "string" },
+        "designStitch": { "type": "number" },
+        "frame": { "type": "number" },
+        "totalMeters": { "type": "number" },
+        "totalStitches": { "type": "number" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "shift", "machineId"]
+    }
+  },
+  "firestore": {
+    "/machines/{machineId}": {
+      "schema": "Machine",
+      "description": "Top-level collection for machine details."
+    },
+    "/machines/{machineId}/logs/{logId}": {
+      "schema": "ProductionRecord",
+      "description": "Sub-collection for production logs per machine."
+    }
+  }
+}

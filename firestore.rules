@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(ownerId) {
+      return isSignedIn() && request.auth.uid == ownerId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidMachine(data) {
+      return data.keys().hasAll(['id', 'name', 'status', 'ownerId']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.status in ['QUEUED', 'IN_PROGRESS', 'QUALITY_CHECK', 'COMPLETED', 'DELAYED'] &&
+             data.ownerId == request.auth.uid &&
+             (data.get('machineHead', '') is string && data.get('machineHead', '').size() <= 100) &&
+             (data.get('progress', 0) is number && data.get('progress', 0) >= 0 && data.get('progress', 0) <= 100);
+    }
+
+    function isValidLog(data) {
+      return data.keys().hasAll(['date', 'shift', 'machineId', 'userId']) &&
+             data.date is string && data.date.size() <= 20 &&
+             data.shift in ['DAY', 'NIGHT'] &&
+             data.machineId is string &&
+             data.userId == request.auth.uid &&
+             (data.get('operatorName', '') is string && data.get('operatorName', '').size() <= 100) &&
+             (data.get('totalMeters', 0) is number && data.get('totalMeters', 0) >= 0);
+    }
+
+    // Machines Collection
+    match /machines/{machineId} {
+      allow read: if isOwner(existing().ownerId);
+      allow create: if isSignedIn() && isValidMachine(incoming()) && incoming().createdAt == request.time;
+      allow update: if isOwner(existing().ownerId) && isValidMachine(incoming()) && 
+                    incoming().ownerId == existing().ownerId &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().updatedAt == request.time;
+      allow delete: if isOwner(existing().ownerId);
+
+      // Logs Subcollection
+      match /logs/{logId} {
+        // Master Gate: Verify machine ownership before log operations
+        allow read: if isOwner(get(/databases/$(database)/documents/machines/$(machineId)).data.ownerId);
+        allow create: if isOwner(get(/databases/$(database)/documents/machines/$(machineId)).data.ownerId) && 
+                      isValidLog(incoming()) &&
+                      incoming().createdAt == request.time;
+        // Logs are typically immutable in this app, but if we need updates:
+        allow update: if false; // Deny updates to historical logs for now
+        allow delete: if isOwner(get(/databases/$(database)/documents/machines/$(machineId)).data.ownerId);
+      }
+    }
+  }
+}
