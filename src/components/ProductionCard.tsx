@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { ProductionItem, ProductionRecord } from "../types";
 import { StatusBadge } from "./StatusBadge";
 import { ProgressBar } from "./ProgressBar";
-import { Calendar, Trash2, Plus, Pencil } from "lucide-react";
+import { Calendar, Trash2, Plus, Pencil, History } from "lucide-react";
 import { formatDate, cn } from "../lib/utils";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { AddProductionModal } from './AddProductionModal';
 
 interface ProductionCardProps {
@@ -18,6 +18,7 @@ interface ProductionCardProps {
 
 export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClick }: ProductionCardProps) {
   const [isProductionModalOpen, setIsProductionModalOpen] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
   return (
     <>
@@ -27,53 +28,75 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         whileHover={{ borderColor: "#6366f1", backgroundColor: "#fcfdff" }}
-        onClick={onClick}
-        className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col transition-all cursor-pointer group h-full"
+        onClick={() => setShowActions(!showActions)}
+        className="relative bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col transition-all cursor-pointer group h-full"
       >
+        {/* Action Overlay */}
+        <AnimatePresence>
+          {showActions && (
+            <motion.div 
+              initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+              animate={{ opacity: 1, backdropFilter: 'blur(4px)' }}
+              exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+              className="absolute inset-0 z-20 bg-slate-900/60 flex items-center justify-center gap-2 p-2"
+            >
+              <div className="grid grid-cols-2 gap-2 w-full max-w-[200px]">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsProductionModalOpen(true);
+                    setShowActions(false);
+                  }}
+                  className="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-white/20 transition-all active:scale-95"
+                >
+                  <Plus className="w-5 h-5 text-indigo-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Add</span>
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onClick) onClick();
+                    setShowActions(false);
+                  }}
+                  className="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-white/20 transition-all active:scale-95"
+                >
+                  <History className="w-5 h-5 text-amber-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">History</span>
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onEdit) onEdit(item);
+                    setShowActions(false);
+                  }}
+                  className="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-white/20 transition-all active:scale-95"
+                >
+                  <Pencil className="w-5 h-5 text-blue-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Edit</span>
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onDelete) onDelete(item.id);
+                    setShowActions(false);
+                  }}
+                  className="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-white/20 transition-all active:scale-95"
+                >
+                  <Trash2 className="w-5 h-5 text-rose-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Delete</span>
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="p-2 sm:px-5 sm:py-4 border-b border-slate-50 flex justify-between items-center bg-slate-50/50 group-hover:bg-indigo-50/30 transition-colors">
           <div className="flex items-center gap-1 sm:gap-2">
             <span className="font-mono text-[8px] sm:text-[10px] font-bold text-slate-400">{item.id}</span>
             <span className="font-bold text-slate-700 text-[9px] sm:text-xs uppercase tracking-tight truncate max-w-[50px] sm:max-w-none">{item.category}</span>
           </div>
           <div className="flex items-center gap-1 text-[8px] sm:text-[10px]">
-            <div className="flex items-center gap-0.5 sm:gap-1">
-              {onEdit && (
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(item);
-                  }}
-                  className="p-1 sm:p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all cursor-pointer"
-                  title="Edit Machine"
-                >
-                  <Pencil className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-                </button>
-              )}
-              {onAddProduction && (
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsProductionModalOpen(true);
-                  }}
-                  className="p-1 sm:p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all cursor-pointer"
-                  title="Add Production"
-                >
-                  <Plus className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-                </button>
-              )}
-              {onDelete && (
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(item.id);
-                  }}
-                  className="p-1 sm:p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
-                  title="Delete Machine"
-                >
-                  <Trash2 className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-                </button>
-              )}
-            </div>
+            <StatusBadge status={item.status} />
           </div>
         </div>
         
