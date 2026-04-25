@@ -5,6 +5,7 @@ import { auth, signInWithGoogle } from '../lib/firebase';
 interface FirebaseContextType {
   user: User | null;
   loading: boolean;
+  isLoggingIn: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -23,11 +24,21 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return unsubscribe;
   }, []);
 
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const login = async () => {
+    if (isLoggingIn) return;
+    setIsLoggingIn(true);
     try {
       await signInWithGoogle();
-    } catch (error) {
-      console.error("Login failed:", error);
+    } catch (error: any) {
+      if (error.code === 'auth/cancelled-popup-request' || error.code === 'auth/popup-closed-by-user') {
+        console.warn("Login popup was closed by the user.");
+      } else {
+        console.error("Login failed:", error);
+      }
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -40,7 +51,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   return (
-    <FirebaseContext.Provider value={{ user, loading, login, logout }}>
+    <FirebaseContext.Provider value={{ user, loading, isLoggingIn, login, logout }}>
       {children}
     </FirebaseContext.Provider>
   );

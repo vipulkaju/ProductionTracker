@@ -132,59 +132,72 @@ export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 pb-20"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="space-y-8 pb-32"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      {/* Header Panel */}
+      <div className="glass rounded-3xl sm:rounded-[3rem] p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 border-white/40 shadow-xl overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-12 bg-emerald-500/5 blur-3xl rounded-full translate-x-12 -translate-y-12" />
+        
+        <div className="flex items-center gap-4 sm:gap-6 relative z-10 w-full sm:w-auto">
           <button 
             onClick={onBack}
-            className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-3 sm:p-4 glass rounded-2xl hover:bg-white transition-all text-slate-800 shadow-sm active:scale-90"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <div>
-            <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">WhatsApp Reports</h2>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Share Daily Production</p>
+            <h2 className="text-xl sm:text-3xl font-black text-slate-900 font-display tracking-tight leading-none uppercase italic">Report Node</h2>
+            <div className="flex items-center gap-2 mt-2 sm:mt-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Transmission Ready</p>
+            </div>
           </div>
         </div>
-        <div className="relative">
-          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+
+        <div className="relative group w-full sm:w-auto">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-slate-900 text-white rounded-lg sm:rounded-xl shadow-lg z-10">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </div>
           <input 
             type="date" 
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-sm outline-none"
+            className="w-full sm:w-auto pl-14 sm:pl-16 pr-6 sm:pr-8 py-4 sm:py-5 bg-white border-2 border-slate-100 rounded-2xl sm:rounded-[2rem] text-[12px] sm:text-sm font-black text-slate-900 focus:ring-8 focus:ring-slate-900/5 focus:border-slate-900 transition-all shadow-md outline-none uppercase tracking-widest cursor-pointer"
           />
         </div>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-40 bg-white border border-slate-100 rounded-3xl animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="h-64 glass rounded-3xl sm:rounded-[2.5rem] border-white/30 animate-pulse border-2" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {reports.map((report) => (
-            <div 
+            <motion.div 
               key={report.machine.id}
-              className="bg-white border border-slate-100 rounded-[2rem] p-5 shadow-sm space-y-4 hover:shadow-md transition-shadow"
+              whileHover={{ y: -8 }}
+              className="glass rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 shadow-xl space-y-5 sm:space-y-6 border-white/60 relative group border-2 card-shadow"
             >
-              <div className="flex items-center gap-3 border-b border-slate-50 pb-3">
-                <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center">
-                  <Box className="w-5 h-5" />
+              <div className="flex items-center gap-4 sm:gap-5 border-b border-slate-100 pb-4 sm:pb-5">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900 text-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group-hover:rotate-0 transition-transform">
+                  <Box className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-slate-800 uppercase leading-none">{report.machine.name}</h3>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">{report.machine.category}</p>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase font-display leading-none tracking-tight">{report.machine.name}</h3>
+                  <div className="flex items-center gap-2 mt-1.5 sm:mt-2">
+                    <span className="text-[8px] sm:text-[9px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded-md">
+                      {report.machine.category}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 gap-5">
                 <ShiftSummary 
                   shift="DAY" 
                   log={report.dayShift} 
@@ -198,31 +211,34 @@ export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
                   color="slate"
                 />
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-md">
+      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 px-6 w-full max-w-2xl">
         <button 
           onClick={handleShare}
           disabled={loading || reports.length === 0}
-          className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-[0_10px_20px_-10px_rgba(16,185,129,0.5)] hover:bg-emerald-500 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+          className="group relative w-full py-6 bg-emerald-600 text-white rounded-[2.5rem] font-black text-xs sm:text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-4 shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden"
         >
-          <MessageSquare className="w-5 h-5" />
-          <span>WhatsApp Production Report</span>
+          <div className="relative z-10 flex items-center gap-3">
+            <MessageSquare className="w-6 h-6" />
+            <span>Generate & Push Transmission</span>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
       </div>
 
       {!loading && reports.length === 0 && (
-        <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
-          <div className="p-5 bg-slate-50 rounded-full">
-            <Box className="w-10 h-10 text-slate-300" />
+        <div className="py-40 flex flex-col items-center justify-center text-center space-y-6">
+          <div className="p-8 bg-slate-100 rounded-[2.5rem] shadow-inner">
+            <Box className="w-16 h-16 text-slate-300" />
           </div>
           <div>
-            <p className="font-bold text-slate-800">No machines found</p>
-            <p className="text-sm text-slate-400 uppercase tracking-widest font-black mt-1">Please add machines to generate reports</p>
+            <h3 className="text-xl font-black text-slate-900 font-display uppercase tracking-tight">Empty Registry</h3>
+            <p className="text-[10px] text-slate-400 uppercase tracking-[0.3em] font-black mt-3">Please initialize assets to generate telemetry records</p>
           </div>
         </div>
       )}
@@ -238,44 +254,57 @@ function ShiftSummary({ shift, log, icon: Icon, color }: {
 }) {
   if (!log) {
     return (
-      <div className="bg-slate-50/50 rounded-2xl p-3 border border-slate-100 flex items-center justify-between opacity-50 grayscale italic">
-        <div className="flex items-center gap-2">
-          <Icon className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{shift}</span>
+      <div className="bg-slate-50/50 rounded-[2rem] p-5 border-2 border-dashed border-slate-100 flex items-center justify-between opacity-50 grayscale transition-all">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-slate-100 rounded-xl">
+            <Icon className="w-4 h-4 text-slate-400" />
+          </div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{shift} SHIFT</span>
         </div>
-        <span className="text-[10px] font-bold text-slate-300 uppercase">No Entry</span>
+        <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] border border-slate-200 px-3 py-1 rounded-full">Null Log</span>
       </div>
     );
   }
 
+  const isDay = shift === 'DAY';
+
   return (
     <div className={cn(
-      "rounded-2xl p-3 border transition-all",
-      shift === 'DAY' ? "bg-amber-50/30 border-amber-100/50" : "bg-slate-50 border-slate-200"
+      "rounded-[2rem] p-5 border-2 transition-all group/shift",
+      isDay ? "bg-amber-50/20 border-amber-50 shadow-sm" : "bg-slate-50 border-slate-100"
     )}>
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <Icon className={cn("w-3.5 h-3.5", shift === 'DAY' ? "text-amber-500" : "text-slate-600")} />
-          <span className={cn("text-[10px] font-black uppercase tracking-widest", shift === 'DAY' ? "text-amber-700" : "text-slate-900")}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className={cn(
+            "p-2 rounded-xl shadow-sm",
+            isDay ? "bg-amber-400 text-white" : "bg-slate-900 text-white"
+          )}>
+            <Icon className="w-4 h-4" />
+          </div>
+          <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", isDay ? "text-amber-800" : "text-slate-900")}>
             {shift}
           </span>
         </div>
-        <div className="flex items-center gap-1 opacity-60">
-          <User className="w-2.5 h-2.5" />
-          <span className="text-[9px] font-black uppercase">{log.operatorName}</span>
+        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm">
+          <User className="w-3 h-3 text-indigo-400" />
+          <span className="text-[10px] font-black uppercase text-slate-700 font-display">{log.operatorName}</span>
         </div>
       </div>
       
-      <div className="flex flex-col gap-1">
-        <p className="text-[10px] font-black text-slate-800 uppercase truncate">{log.designName}</p>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <Activity className="w-2.5 h-2.5 text-indigo-500" />
-            <span className="text-[10px] font-bold text-slate-700">{log.totalStitches.toLocaleString()}</span>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-black text-slate-900 uppercase truncate max-w-[150px] italic">{log.designName}</p>
+          <div className="h-px flex-1 mx-4 bg-slate-100" />
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="bg-white/80 p-2.5 rounded-2xl flex items-center gap-2 shadow-sm border border-slate-50 flex-1">
+            <Activity className="w-3 h-3 text-indigo-500" />
+            <span className="text-[11px] font-black text-slate-900">{log.totalStitches.toLocaleString()}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Ruler className="w-2.5 h-2.5 text-emerald-500" />
-            <span className="text-[10px] font-bold text-slate-700">{log.totalMeters}m</span>
+          <div className="bg-white/80 p-2.5 rounded-2xl flex items-center gap-2 shadow-sm border border-slate-50 flex-1">
+            <Ruler className="w-3 h-3 text-emerald-500" />
+            <span className="text-[11px] font-black text-slate-900">{log.totalMeters}m</span>
           </div>
         </div>
       </div>

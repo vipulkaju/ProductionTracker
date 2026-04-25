@@ -58,72 +58,82 @@ export function EditMachineModal({ isOpen, onClose, onUpdate, item }: EditMachin
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[130] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[130] flex items-center justify-center p-6"
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 30 }}
+            initial={{ scale: 0.9, opacity: 0, y: 40 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 30 }}
+            exit={{ scale: 0.9, opacity: 0, y: 40 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-[2rem] shadow-2xl w-full max-w-xl overflow-hidden border border-slate-200"
+            className="bg-white/95 backdrop-blur-2xl rounded-[3rem] shadow-2xl w-full max-w-2xl overflow-hidden border border-white/50 relative"
           >
-            <div className="bg-slate-50 px-8 py-6 border-b border-slate-200 flex justify-between items-center">
+            {/* Design Element */}
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-indigo-500 to-purple-500" />
+            
+            <div className="px-10 pt-12 pb-6 flex justify-between items-start border-b border-slate-50">
               <div>
-                <h2 className="text-xl font-black text-slate-800 tracking-tight">Edit Machine Config</h2>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">
-                  ID: {formData.id}
-                </p>
+                <h2 className="text-3xl font-black text-slate-900 font-display tracking-tight leading-none uppercase italic">Modify Asset</h2>
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="px-3 py-1 bg-slate-900 text-white rounded-lg font-black text-[9px] uppercase tracking-widest">
+                    ID: {formData.id}
+                  </div>
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Configuration Node
+                  </div>
+                </div>
               </div>
               <button 
                 onClick={onClose}
-                className="p-3 hover:bg-white rounded-2xl transition-all text-slate-400 hover:text-slate-900 border border-transparent hover:border-slate-200 hover:shadow-sm"
+                className="p-3 glass rounded-2xl hover:bg-slate-900 hover:text-white transition-all text-slate-400 active:scale-90"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[80vh] overflow-y-auto scrollbar-hide">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormGroup label="Machine Name" icon={Settings}>
-                  <input name="name" required value={formData.name} onChange={handleChange} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all" />
+            <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto scrollbar-hide">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <FormGroup label="Asset Label" icon={Settings}>
+                  <input name="name" required value={formData.name} onChange={handleChange} className="form-input-premium" />
                 </FormGroup>
 
-                <FormGroup label="Category" icon={LayoutGrid}>
-                  <select name="category" value={formData.category} onChange={handleChange} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
+                <FormGroup label="Asset Class" icon={LayoutGrid}>
+                  <select name="category" value={formData.category} onChange={handleChange} className="form-input-premium appearance-none">
                     <option value="Machine">Machine</option>
                     <option value="Job Work">Job Work</option>
                     <option value="Packaging">Packaging</option>
                   </select>
                 </FormGroup>
 
-                <FormGroup label="Machine Head" icon={Settings}>
-                  <input name="machineHead" type="number" required value={formData.machineHead} onChange={handleChange} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all" />
-                </FormGroup>
+                <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                  <FormGroup label="Metric: Head" icon={Settings}>
+                    <input name="machineHead" type="number" required value={formData.machineHead} onChange={handleChange} className="form-input-premium bg-white" />
+                  </FormGroup>
 
-                <FormGroup label="Machine Area" icon={LayoutGrid}>
-                  <input name="machineArea" type="number" required value={formData.machineArea} onChange={handleChange} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all" />
-                </FormGroup>
+                  <FormGroup label="Metric: Area" icon={LayoutGrid}>
+                    <input name="machineArea" type="number" required value={formData.machineArea} onChange={handleChange} className="form-input-premium bg-white" />
+                  </FormGroup>
 
-                <FormGroup label="Frame Meters (Auto)" icon={Ruler}>
-                  <input name="frameMeters" type="number" step="0.0001" readOnly value={formData.frameMeters} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-indigo-600 focus:outline-none cursor-default" />
-                </FormGroup>
+                  <FormGroup label="Calculated m/f" icon={Ruler}>
+                    <input name="frameMeters" type="number" step="0.0001" readOnly value={formData.frameMeters} className="form-input-premium bg-white/50 font-black text-indigo-600 border-dashed cursor-default" />
+                  </FormGroup>
 
-                <FormGroup label="Status" icon={Layers}>
-                  <select name="status" value={formData.status} onChange={handleChange} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
-                    <option value="IN_PROGRESS">Running</option>
-                    <option value="DELAYED">Delayed</option>
-                    <option value="QUALITY_CHECK">Quality Check</option>
-                    <option value="MAINTENANCE">Maintenance</option>
-                  </select>
-                </FormGroup>
+                  <FormGroup label="Operational Status" icon={Layers}>
+                    <select name="status" value={formData.status} onChange={handleChange} className="form-input-premium bg-white appearance-none">
+                      <option value="IN_PROGRESS">Running</option>
+                      <option value="DELAYED">Delayed</option>
+                      <option value="QUALITY_CHECK">Quality Check</option>
+                      <option value="MAINTENANCE">Maintenance</option>
+                    </select>
+                  </FormGroup>
+                </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-6">
                 <button
                   type="submit"
-                  className="w-full py-4 bg-slate-900 text-white rounded-2xl text-sm font-black shadow-xl shadow-slate-200 hover:bg-indigo-600 hover:shadow-indigo-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 uppercase tracking-widest"
+                  className="w-full py-5 bg-slate-900 text-white rounded-[2rem] text-sm font-black shadow-2xl shadow-indigo-100 hover:bg-indigo-600 transition-all active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-[0.2em]"
                 >
-                  Update Machine Info
+                  Commit Asset Change
                 </button>
               </div>
             </form>
@@ -136,10 +146,10 @@ export function EditMachineModal({ isOpen, onClose, onUpdate, item }: EditMachin
 
 function FormGroup({ label, children, icon: Icon }: { label: string, children: React.ReactNode, icon: any }) {
   return (
-    <div className="space-y-1.5 flex flex-col">
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+    <div className="space-y-2 flex flex-col">
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{label}</label>
       <div className="relative">
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
         {children}
       </div>
     </div>
