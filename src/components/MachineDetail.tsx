@@ -46,66 +46,66 @@ export function MachineDetail({ item, onBack }: MachineDetailProps) {
       className="space-y-8 pb-12"
     >
       {/* Header Navigation */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         <button 
           onClick={onBack}
-          className="p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all text-slate-600 cursor-pointer shadow-sm"
+          className="p-1 sm:p-2 bg-white border border-slate-200 rounded-lg sm:rounded-xl hover:bg-slate-50 transition-all text-slate-600 cursor-pointer shadow-sm"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4 sm:w-5 h-5" />
         </button>
         <div>
-          <h2 className="text-2xl font-black text-slate-800 tracking-tight">{item.name}</h2>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="font-mono text-xs font-bold text-slate-400">{item.id}</span>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">{item.name}</h2>
+          <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+            <span className="font-mono text-[9px] sm:text-xs font-bold text-slate-400">{item.id}</span>
             <div className="w-1 h-1 rounded-full bg-slate-300" />
-            <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{item.category}</span>
+            <span className="text-[8px] sm:text-[10px] font-black text-indigo-600 uppercase tracking-widest">{item.category}</span>
           </div>
         </div>
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-              <LayoutDashboard className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-indigo-600">
+              <LayoutDashboard className="w-4 h-4 sm:w-5 h-5" />
             </div>
             <StatusBadge status={item.status} />
           </div>
           <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Production Progress</p>
+            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Production Progress</p>
             <div className="flex justify-between items-end mb-2">
-              <span className="text-2xl font-black text-slate-800">{item.progress}%</span>
-              <span className="text-xs font-bold text-slate-400">Target Reached</span>
+              <span className="text-xl sm:text-2xl font-black text-slate-800">{item.progress}%</span>
+              <span className="text-[10px] font-bold text-slate-400">Target Reached</span>
             </div>
             <ProgressBar progress={item.progress} status={item.status} />
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-4">
-          <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
-            <Activity className="w-5 h-5" />
+        <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm space-y-4">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-emerald-600">
+            <Activity className="w-4 h-4 sm:w-5 h-5" />
           </div>
           <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Logs</p>
+            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Logs</p>
             <div className="flex justify-between items-end">
-              <span className="text-2xl font-black text-slate-800">{logs.length}</span>
-              <span className="text-xs font-bold text-emerald-600">Active Entries</span>
+              <span className="text-xl sm:text-2xl font-black text-slate-800">{logs.length}</span>
+              <span className="text-[10px] font-bold text-emerald-600">Active Entries</span>
             </div>
-            <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-wide">Machine Head: {item.machineHead || 'N/A'}</p>
+            <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-wide">Machine Head: {item.machineHead || 'N/A'}</p>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-4">
-          <div className="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600">
-            <Calendar className="w-5 h-5" />
+        <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm space-y-4 sm:col-span-2 lg:col-span-1">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-amber-600">
+            <Calendar className="w-4 h-4 sm:w-5 h-5" />
           </div>
           <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Schedule</p>
+            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Schedule</p>
             <div className="flex justify-between items-end">
               <div className="space-y-0.5">
-                <span className="block text-xs font-black text-slate-800 uppercase">Started: {formatDate(item.startDate)}</span>
-                <span className="block text-xs font-black text-rose-600 uppercase">Due: {formatDate(item.dueDate)}</span>
+                <span className="block text-[10px] sm:text-xs font-black text-slate-800 uppercase">Started: {formatDate(item.startDate)}</span>
+                <span className="block text-[10px] sm:text-xs font-black text-rose-600 uppercase">Due: {formatDate(item.dueDate)}</span>
               </div>
             </div>
           </div>
@@ -113,13 +113,13 @@ export function MachineDetail({ item, onBack }: MachineDetailProps) {
       </div>
 
       {/* Production History Section */}
-      <section className="space-y-8">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-indigo-600 text-white rounded-xl">
-            <FileText className="w-4 h-4" />
+      <section className="space-y-6 sm:space-y-8">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 bg-indigo-600 text-white rounded-lg sm:rounded-xl">
+            <FileText className="w-3.5 h-3.5 sm:w-4 h-4" />
           </div>
-          <h3 className="font-black text-slate-800 uppercase tracking-tight">Production History (પ્રોડક્શન નો હિસાબ)</h3>
-          <div className="flex-1 h-px bg-slate-200 ml-4" />
+          <h3 className="text-xs sm:text-base font-black text-slate-800 uppercase tracking-tight">History (હિસાબ)</h3>
+          <div className="flex-1 h-px bg-slate-200 ml-2" />
         </div>
 
         {logsByDate.length > 0 ? (

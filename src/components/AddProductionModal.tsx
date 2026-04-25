@@ -227,12 +227,12 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto scrollbar-hide">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto scrollbar-hide">
               {/* AI Scan Action */}
               <div 
                 onClick={() => !isScanning && fileInputRef.current?.click()}
                 className={cn(
-                  "relative group cursor-pointer border-2 border-dashed rounded-3xl p-6 transition-all overflow-hidden",
+                  "relative group cursor-pointer border-2 border-dashed rounded-3xl p-4 sm:p-6 transition-all overflow-hidden",
                   isScanning ? "bg-slate-50 border-slate-200" : "bg-indigo-50/30 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50/50"
                 )}
               >
@@ -248,22 +248,30 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                   </div>
                 )}
                 
-                <div className="flex flex-col items-center justify-center gap-3 relative z-10">
+                <div className="flex items-center gap-4 relative z-10">
                   <div className={cn(
-                    "p-4 rounded-2xl shadow-sm transition-all",
+                    "p-3 sm:p-4 rounded-2xl shadow-sm transition-all shrink-0",
                     isScanning ? "bg-white text-indigo-600 animate-pulse" : "bg-white text-indigo-600 group-hover:scale-110 group-hover:rotate-3 shadow-indigo-100"
                   )}>
-                    {isScanning ? <Loader2 className="w-6 h-6 animate-spin" /> : <Camera className="w-6 h-6" />}
+                    {isScanning ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Camera className="w-5 h-5 sm:w-6 sm:h-6" />}
                   </div>
-                  <div className="text-center">
-                    <p className="text-sm font-black text-slate-800 tracking-tight uppercase">
-                      {isScanning ? 'AI is scanning your sheet...' : 'Upload Production Sheet'}
+                  <div className="text-left">
+                    <p className="text-xs sm:text-sm font-black text-slate-800 tracking-tight uppercase">
+                      {isScanning ? 'AI Scanning...' : 'Scan Sheet'}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                      {isScanning ? 'Extracting day & night shift data' : 'Select photo from gallery to auto-fill'}
+                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                      {isScanning ? 'Extracting shift data' : 'Take photo or upload'}
                     </p>
                   </div>
                 </div>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleScan} 
+                  accept="image/*" 
+                  capture="environment"
+                  className="hidden" 
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -278,7 +286,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                         type="button"
                         onClick={() => setCurrentShift('DAY')}
                         className={cn(
-                          "py-2.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
+                          "py-3 px-4 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all border-2",
                           currentShift === 'DAY'
                             ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100"
                             : "bg-white border-slate-100 text-slate-400 hover:border-slate-200"
@@ -290,7 +298,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                         type="button"
                         onClick={() => setCurrentShift('NIGHT')}
                         className={cn(
-                          "py-2.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
+                          "py-3 px-4 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all border-2",
                           currentShift === 'NIGHT'
                             ? "bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-200"
                             : "bg-white border-slate-100 text-slate-400 hover:border-slate-200"
@@ -312,7 +320,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                   </FormGroup>
  
                   <div className="grid grid-cols-2 gap-4">
-                    <FormGroup label="Design Stitch" icon={Activity}>
+                    <FormGroup label="Tich" icon={Activity}>
                       <input name="designStitch" type="number" required value={shiftsData[currentShift].designStitch ?? 0} onChange={handleChange} className="form-input" />
                     </FormGroup>
                     <FormGroup label="Frame" icon={Hash}>
@@ -320,7 +328,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                     </FormGroup>
                   </div>
  
-                  <FormGroup label="Total Meters" icon={Plus}>
+                  <FormGroup label="Meters" icon={Plus}>
                     <input name="totalMeters" type="number" step="0.01" required value={shiftsData[currentShift].totalMeters ?? 0} onChange={handleChange} className="form-input" />
                   </FormGroup>
  

@@ -86,38 +86,38 @@ export default function App() {
   }, [items, selectedMachineId]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col h-screen overflow-hidden">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col transition-all">
       <AddMachineModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onAdd={handleAddItem} 
       />
       {/* Sleek Header */}
-      <header className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center z-50 shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
-            <Box className="w-6 h-6 text-white" />
+      <header className="bg-white border-b border-slate-200 px-4 sm:px-8 py-4 flex justify-between items-center z-50 sticky top-0 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <Box className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight">ProductionTracker <span className="text-indigo-600">v2.4</span></h1>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Operational Intelligence Dashboard</p>
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight">PT <span className="text-indigo-600">v2.4</span></h1>
+            <p className="text-[8px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest hidden xs:block">Intelligence Dashboard</p>
           </div>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6">
           <div className="text-right hidden sm:block">
             <p className="text-sm font-bold">Shift: Morning (A)</p>
             <p className="text-[10px] text-emerald-600 font-bold uppercase">06:00 — 14:00 • In Progress</p>
           </div>
-          <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs ring-2 ring-indigo-50/50">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs ring-2 ring-indigo-50/50">
             VR
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden flex">
+      <div className="flex-1 flex flex-col lg:flex-row xl:container xl:mx-auto">
         {/* Main Workspace */}
-        <main className="flex-1 overflow-y-auto p-8 space-y-8 scroll-smooth scrollbar-hide">
+        <main className="flex-1 p-4 sm:p-8 space-y-6 sm:space-y-8 scroll-smooth">
           <AnimatePresence mode="wait">
             {selectedMachine ? (
               <MachineDetail 
@@ -128,13 +128,13 @@ export default function App() {
             ) : (
               <motion.div 
                 key="dashboard"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="space-y-8"
               >
                 {/* Stats Section */}
-                <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                   {metrics.map((m, idx) => (
                     <MetricCard key={idx} {...m as any} />
                   ))}
@@ -142,36 +142,39 @@ export default function App() {
 
                 {/* Lines Status Overview */}
                 <section className="space-y-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Live Production Lines</h3>
-                    <div className="flex items-center gap-2">
-                      <div className="relative">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Live Lines</h3>
+                      <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm cursor-pointer text-[10px] font-bold uppercase tracking-wider"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Machine</span>
+                      </button>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                         <input 
                           type="text" 
                           placeholder="Quick search..." 
-                          className="pl-9 pr-4 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none w-48 transition-all"
+                          className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
                         />
                       </div>
-                      <div className="h-4 w-[1px] bg-slate-200 mx-2" />
-                      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+                      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1">
                         <FilterButton active={filter === "ALL"} onClick={() => setFilter("ALL")}>All</FilterButton>
                         <FilterButton active={filter === "IN_PROGRESS"} onClick={() => setFilter("IN_PROGRESS")}>Running</FilterButton>
                         <FilterButton active={filter === "DELAYED"} onClick={() => setFilter("DELAYED")}>Alerts</FilterButton>
-                        <FilterButton active={filter === "QUALITY_CHECK"} onClick={() => setFilter("QUALITY_CHECK")}>Machines</FilterButton>
+                        <FilterButton active={filter === "QUALITY_CHECK"} onClick={() => setFilter("QUALITY_CHECK")}>Inspect</FilterButton>
                       </div>
-                      <button 
-                        onClick={() => setIsModalOpen(true)}
-                        className="p-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors ml-2 shadow-sm cursor-pointer"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 pb-8">
                     <AnimatePresence mode="popLayout">
                       {filteredItems.map((item) => (
                         <ProductionCard 

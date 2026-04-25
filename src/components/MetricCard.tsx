@@ -33,7 +33,7 @@ export function MetricCard({ label, value, change, trend, icon: Icon }: MetricCa
       </div>
       <div>
         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</p>
-        <h3 className="text-3xl font-bold text-slate-800 mt-1 tracking-tight">{value}</h3>
+        <h3 className="text-xl sm:text-3xl font-bold text-slate-800 mt-1 tracking-tight">{value}</h3>
       </div>
     </motion.div>
   );
