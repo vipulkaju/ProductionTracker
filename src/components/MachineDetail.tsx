@@ -135,110 +135,114 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
       exit={{ opacity: 0, scale: 1.02 }}
       className="space-y-10 pb-12"
     >
-      {/* Deep Cinematic Header */}
-      <div className="glass rounded-3xl sm:rounded-[3.5rem] p-6 sm:p-12 border-white/50 shadow-2xl relative overflow-hidden group border-2 flex flex-col lg:flex-row items-center gap-6 sm:gap-8">
-        <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-indigo-500/5 blur-[80px] sm:blur-[100px] rounded-full group-hover:bg-indigo-500/10 transition-colors duration-1000" />
+      {/* Deep Cinematic Header Project Node */}
+      <div className="bento-card p-8 sm:p-14 relative overflow-hidden group flex flex-col lg:flex-row items-center gap-8 sm:gap-12">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full group-hover:bg-indigo-600/10 transition-colors duration-1000 translate-x-1/3 -translate-y-1/3" />
         
-        <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 relative z-10 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-10 relative z-10 w-full sm:w-auto">
           <button 
             onClick={onBack}
-            className="p-3 sm:p-5 glass rounded-2xl sm:rounded-3xl hover:bg-slate-900 hover:text-white transition-all text-slate-800 shadow-lg active:scale-90 self-start sm:self-center"
+            className="p-5 sm:p-6 pill-button rounded-[2rem] hover:text-rose-500 transition-all text-slate-800 active:scale-90 self-start sm:self-center"
           >
-            <ArrowLeft className="w-5 h-5 sm:w-7 sm:h-7" />
+            <ArrowLeft className="w-6 h-6 sm:w-8 sm:h-8" />
           </button>
           
           <div className="flex flex-col text-center sm:text-left">
-            <div className="flex items-center justify-center sm:justify-start gap-3 mb-2">
-              <span className="p-1 px-3 bg-slate-900 text-white rounded-lg font-black text-[9px] sm:text-[10px] uppercase tracking-[0.2em]">{item.id}</span>
-              <div className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-            </div>
-            <h2 className="text-3xl sm:text-6xl font-black text-slate-900 font-display tracking-tight leading-tight sm:leading-none uppercase italic border-b-4 sm:border-b-8 border-indigo-500/30 pb-2">
-              {item.name}
-            </h2>
-            <div className="flex items-center justify-center sm:justify-start gap-3 sm:gap-4 mt-4">
-              <div className="flex items-center gap-2 bg-indigo-50 px-2.5 py-1.5 rounded-xl border border-indigo-100">
-                <Box className="w-3.5 h-4 text-indigo-500" />
-                <span className="text-[10px] sm:text-[11px] font-black text-indigo-600 uppercase tracking-widest">{item.category}</span>
+            <div className="flex items-center justify-center sm:justify-start gap-3 mb-4">
+              <span className="px-3 py-1 bg-slate-900 text-white rounded-lg font-black text-[9px] sm:text-[10px] uppercase tracking-[0.3em] shadow-lg shadow-slate-200">
+                ACTIVE NODE {item.id}
+              </span>
+              <div className="flex gap-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/30" />
               </div>
-              <StatusBadge status={item.status} className="px-3 py-1.5 text-[9px] sm:text-[10px]" />
+            </div>
+            <h2 className="text-4xl sm:text-7xl font-black text-slate-900 font-display tracking-tighter leading-tight sm:leading-none uppercase italic">
+              {item.name.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-indigo-600">{word}</span> : word + ' ')}
+            </h2>
+            <div className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-6">
+              <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-100 shadow-sm">
+                <Box className="w-4 h-4 text-indigo-500" />
+                <span className="text-[11px] sm:text-xs font-black text-slate-600 uppercase tracking-widest">{item.category}</span>
+              </div>
+              <StatusBadge status={item.status} className="px-5 py-2.5 text-[10px] sm:text-[11px] shadow-lg" />
             </div>
           </div>
         </div>
 
         <div className="flex-1" />
         
-        <div className="hidden lg:grid grid-cols-2 gap-4 mr-10 relative z-10 w-full lg:w-auto">
-          <div className="glass p-4 rounded-3xl border border-white text-center min-w-[120px]">
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Availability</p>
-            <h4 className="text-xl font-black text-slate-900">{item.progress}%</h4>
+        <div className="hidden lg:flex items-center gap-8 mr-12 relative z-10">
+          <div className="flex flex-col items-end">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Efficiency Rating</p>
+            <h4 className="text-4xl font-black text-slate-900 font-mono tracking-tighter">{item.progress}%</h4>
           </div>
+          <div className="w-px h-16 bg-slate-100" />
           {item.frameMeters && (
-            <div className="glass p-4 rounded-3xl border border-white text-center min-w-[120px]">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Payload Cap</p>
-              <h4 className="text-xl font-black text-indigo-600 font-mono italic">{item.frameMeters}m</h4>
+            <div className="flex flex-col items-end">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Max Payload Cap</p>
+              <h4 className="text-4xl font-black text-indigo-600 font-mono italic tracking-tighter">{item.frameMeters}m</h4>
             </div>
           )}
         </div>
 
         <button 
           onClick={() => setIsAddModalOpen(true)}
-          className="flex lg:hidden w-full sm:w-auto items-center justify-center gap-3 px-6 py-4 sm:px-10 sm:py-5 premium-gradient text-white rounded-2xl sm:rounded-[2rem] transition-all font-black text-[10px] sm:text-sm uppercase tracking-[0.2em] sm:tracking-[0.3em] shadow-xl shadow-indigo-100 relative z-10 mt-4 sm:mt-0"
+          className="flex lg:hidden w-full items-center justify-center gap-4 py-6 premium-gradient text-white rounded-[2.5rem] transition-all font-black text-sm uppercase tracking-[0.3em] shadow-2xl relative z-10"
         >
-          <Plus className="w-5 h-5" />
-          <span>Log Record</span>
+          <Plus className="w-6 h-6" />
+          <span>Synchronize Record</span>
         </button>
 
         <button 
           onClick={() => setIsAddModalOpen(true)}
-          className="hidden lg:flex items-center gap-3 px-10 py-5 premium-gradient text-white rounded-[2rem] hover:scale-[1.03] transition-all font-black text-sm uppercase tracking-[0.3em] shadow-2xl shadow-indigo-100 relative z-10 group shrink-0"
+          className="hidden lg:flex items-center gap-4 px-10 py-7 premium-gradient text-white rounded-[2.5rem] hover:scale-[1.05] transition-all font-black text-sm uppercase tracking-[0.3em] shadow-2xl relative z-10 group"
         >
-          <div className="p-2 bg-white/20 rounded-xl group-hover:rotate-180 transition-transform duration-500">
-            <Plus className="w-5 h-5" />
-          </div>
-          <span>Log Record</span>
+          <Plus className="w-6 h-6 group-hover:rotate-180 transition-transform duration-700" />
+          <span>Synchronize Record</span>
         </button>
       </div>
 
 
       {/* Monthly Uptime Heatmap */}
-      <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-slate-900 text-white rounded-2xl shadow-lg shadow-slate-200">
-              <Calendar className="w-5 h-5" />
+      <section className="space-y-8 pt-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-slate-200">
+              <Calendar className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-none">Shift Tracker</h3>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{format(new Date(), 'MMMM yyyy')}</p>
+              <h3 className="text-base font-black text-slate-900 uppercase tracking-tighter leading-none italic">Temporal Mapping</h3>
+              <p className="text-[11px] font-black text-indigo-500 uppercase tracking-[0.3em] mt-1.5">{format(new Date(), 'MMMM yyyy')}</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-2 bg-slate-100/50 rounded-2xl backdrop-blur-sm px-4">
-            <LegendItem color="bg-rose-500" label="None" />
+          <div className="flex items-center gap-6 bg-white p-4 rounded-3xl border border-slate-100 px-8 shadow-sm">
+            <LegendItem color="bg-rose-500" label="Zero" />
             <LegendItem color="bg-amber-500" label="Partial" />
-            <LegendItem color="bg-emerald-500" label="Full" />
+            <LegendItem color="bg-emerald-500" label="Saturated" />
           </div>
         </div>
 
-        <div className="glass rounded-[2.5rem] p-6 shadow-sm overflow-hidden border-indigo-50">
-          <div className="grid grid-cols-7 sm:grid-cols-10 md:grid-cols-15 lg:grid-cols-31 gap-2.5">
+        <div className="bento-card p-10">
+          <div className="grid grid-cols-7 sm:grid-cols-10 md:grid-cols-15 lg:grid-cols-31 gap-4">
             {monthlyUptimeData.map((day) => (
               <motion.div 
                 key={day.dateStr}
-                whileHover={{ y: -4, scale: 1.1 }}
+                whileHover={{ y: -6, scale: 1.15 }}
                 className={cn(
-                  "aspect-square rounded-xl flex items-center justify-center transition-all shadow-sm relative group",
-                  day.status === 'NONE' ? "bg-rose-500/10 text-rose-600 border border-rose-100" :
-                  day.status === 'PARTIAL' ? "bg-amber-500/10 text-amber-600 border border-amber-100" :
-                  "bg-emerald-500/10 text-emerald-600 border border-emerald-100"
+                  "aspect-square rounded-2xl flex items-center justify-center transition-all shadow-sm relative group",
+                  day.status === 'NONE' ? "bg-slate-50 text-slate-300 border-2 border-slate-100" :
+                  day.status === 'PARTIAL' ? "bg-amber-50 text-amber-600 border-2 border-amber-200 shadow-amber-100" :
+                  "bg-emerald-50 text-emerald-600 border-2 border-emerald-200 shadow-emerald-100"
                 )}
               >
-                <span className="text-[10px] font-black">{day.dayNum}</span>
-                <div className={cn(
-                  "absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full",
-                  day.status === 'NONE' ? "bg-rose-500" :
-                  day.status === 'PARTIAL' ? "bg-amber-500" :
-                  "bg-emerald-500"
-                )} />
+                <span className="text-[11px] font-black">{day.dayNum}</span>
+                {day.status !== 'NONE' && (
+                  <div className={cn(
+                    "absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white",
+                    day.status === 'PARTIAL' ? "bg-amber-500" : "bg-emerald-500"
+                  )} />
+                )}
               </motion.div>
             ))}
           </div>
@@ -246,41 +250,41 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
       </section>
 
       {/* Production History Section */}
-      <section className="space-y-8">
-        <div className="flex items-center gap-4">
-          <div className="p-2.5 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-100">
-            <FileText className="w-5 h-5" />
+      <section className="space-y-12">
+        <div className="flex items-center gap-6 px-4">
+          <div className="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-100">
+            <FileText className="w-6 h-6" />
           </div>
-          <div className="flex-1">
-            <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight leading-none">Production History</h3>
-            <div className="h-px bg-slate-100 mt-2" />
+          <div className="flex-1 flex flex-col">
+            <h3 className="text-base font-black text-slate-900 uppercase tracking-tighter translate-y-1 italic">Registry Archives</h3>
+            <div className="h-px bg-slate-100 mt-3 w-full" />
           </div>
         </div>
 
         {loading ? (
-          <div className="py-20 flex flex-col items-center justify-center text-center">
-            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Synchronizing Telemetry...</p>
+          <div className="py-32 flex flex-col items-center justify-center text-center">
+            <div className="w-16 h-16 border-8 border-indigo-600 border-t-transparent rounded-full animate-spin mb-8" />
+            <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.4em]">Deciphering Nexus History...</p>
           </div>
         ) : logsByDate.length > 0 ? (
-          <div className="space-y-16">
+          <div className="space-y-24">
             {logsByDate.map(([date, shifts]) => (
-              <div key={date} className="space-y-8 relative">
-                <div className="flex items-center gap-6 sticky top-24 z-10 py-2">
-                  <div className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl shadow-xl">
-                    <Calendar className="w-3.5 h-3.5 text-indigo-400" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
+              <div key={date} className="space-y-10 relative">
+                <div className="flex items-center gap-8 sticky top-32 z-10 py-4 bg-slate-50/50 backdrop-blur-md -mx-4 px-4">
+                  <div className="flex items-center gap-4 bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl">
+                    <Calendar className="w-5 h-5 text-indigo-400" />
+                    <span className="text-[13px] font-black uppercase tracking-[0.3em] whitespace-nowrap">
                       {formatDate(date)}
                     </span>
                   </div>
-                  <div className="h-px flex-1 bg-slate-100" />
+                  <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-slate-100 to-transparent" />
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <ShiftSideCard 
                     shift="DAY" 
                     log={shifts.DAY} 
-                    title="Day Shift"
+                    title="SOLAR DEPLOYMENT"
                     accentColor="amber"
                     onDelete={setLogToDelete}
                     onEdit={setEditLog}
@@ -289,7 +293,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
                   <ShiftSideCard 
                     shift="NIGHT" 
                     log={shifts.NIGHT} 
-                    title="Night Shift"
+                    title="LUNAR DEPLOYMENT"
                     accentColor="slate"
                     onDelete={setLogToDelete}
                     onEdit={setEditLog}
@@ -300,12 +304,12 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
             ))}
           </div>
         ) : (
-          <div className="py-32 glass rounded-[3rem] border-dashed border-2 border-slate-200 flex flex-col items-center justify-center text-center">
-            <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-6">
-              <Plus className="w-10 h-10 text-slate-300" />
+          <div className="py-40 bento-card border-dashed border-4 border-slate-200 flex flex-col items-center justify-center text-center">
+            <div className="w-24 h-24 bg-slate-100 rounded-[2rem] flex items-center justify-center mb-10">
+              <Activity className="w-12 h-12 text-slate-300" />
             </div>
-            <h3 className="text-xl font-black text-slate-900 font-display uppercase tracking-tight text-slate-300">Null records found</h3>
-            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-2 max-w-xs">Initialize production logging to record shifts.</p>
+            <h3 className="text-2xl font-black text-slate-400 font-display uppercase tracking-tighter">ARCHIVE EMPTY</h3>
+            <p className="text-sm text-slate-400 font-bold uppercase tracking-[0.2em] mt-4 max-w-sm">No telemetry records detected for this node in the registry.</p>
           </div>
         )}
       </section>
@@ -365,7 +369,7 @@ function DetailMobileActions({ onAdd, onDelete }: { onAdd: () => void, onDelete:
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 20 }}
-              className="absolute bottom-20 right-0 w-64 glass rounded-[2.5rem] shadow-2xl overflow-hidden z-[60] border border-white/40 p-5 space-y-4"
+              className="absolute bottom-20 right-0 w-64 soft-card border border-white/40 p-5 space-y-4 z-[60]"
             >
               <button 
                 onClick={() => { onAdd(); setIsOpen(false); }}
@@ -446,27 +450,29 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
 
   return (
     <motion.div 
-      whileHover={{ scale: 1.01 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -8, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }}
       onClick={() => setShowActions(!showActions)}
       className={cn(
-        "relative glass border-2 rounded-[3rem] overflow-hidden transition-all shadow-sm flex flex-col cursor-pointer group card-shadow",
-        isWinner ? "border-emerald-200 ring-2 ring-emerald-500 ring-offset-4" : 
-        isLoser ? "border-rose-200" :
-        isDay ? "border-amber-100" : "border-slate-200"
+        "relative bento-card border-2 flex flex-col cursor-pointer group hover:shimmer",
+        isWinner ? "border-emerald-200 shadow-emerald-200/50" : 
+        isLoser ? "border-rose-200 shadow-rose-200/50" :
+        isDay ? "border-amber-100 shadow-amber-100/50" : "border-slate-200 shadow-slate-200/50"
       )}
     >
       {/* Action Overlay */}
       <AnimatePresence>
         {(showActions) && (
           <motion.div 
-            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            animate={{ opacity: 1, backdropFilter: 'blur(12px)' }}
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            className="absolute inset-0 z-20 bg-slate-900/80 flex items-center justify-center p-6 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-30 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-6 gap-8 shrink-0"
           >
             <ActionButton 
               icon={Pencil} 
-              label="Edit" 
+              label="Sync Edit" 
               color="indigo" 
               onClick={(e) => {
                 e.stopPropagation();
@@ -476,7 +482,7 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
             />
             <ActionButton 
               icon={Trash2} 
-              label="Delete" 
+              label="Purge Log" 
               color="rose" 
               onClick={(e) => {
                 e.stopPropagation();
@@ -490,72 +496,90 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
 
       {/* Header Accent */}
       <div className={cn(
-        "px-6 py-5 flex items-center justify-between border-b relative overflow-hidden",
-        isWinner ? "bg-emerald-500 text-white border-emerald-600" : 
-        isLoser ? "bg-rose-50 text-rose-900 border-rose-100" :
-        isDay ? "bg-amber-400 text-white border-amber-500" : "bg-slate-900 text-white border-slate-800"
+        "px-10 py-10 flex items-center justify-between relative overflow-hidden",
+        isWinner ? "bg-[#bdfedb]/50 text-emerald-900" : 
+        isLoser ? "bg-[#fedbdc]/50 text-rose-900" :
+        isDay ? "bg-[#fbefcc]/60 text-amber-900" : "bg-[#bde0fe]/50 text-blue-900"
       )}>
         {isWinner && (
-          <div className="absolute top-0 right-0 p-1 bg-white text-emerald-600 rounded-bl-xl font-black text-[8px] uppercase tracking-widest px-3 py-1.5 shadow-xl">
-            Champion Shift
+          <div className="absolute top-0 right-0 p-1 bg-white text-emerald-600 rounded-bl-[2.5rem] font-black text-[10px] uppercase tracking-[0.4em] px-8 py-4 shadow-sm z-10 border-l border-b border-white">
+            CHAMPION SHIFT
           </div>
         )}
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6 relative z-10">
           <div className={cn(
-            "w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg",
-            isWinner ? "bg-white text-emerald-600" :
-            isLoser ? "bg-rose-100 text-rose-600" :
-            "bg-white text-slate-900"
+            "w-20 h-20 rounded-[2.5rem] flex items-center justify-center shadow-soft-sm bg-white",
+            isWinner ? "text-emerald-500" :
+            isLoser ? "text-rose-400" :
+            isDay ? "text-amber-500" : "text-blue-500"
           )}>
-            <Clock className="w-5 h-5" />
+            <Clock className="w-10 h-10" />
           </div>
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">{title}</h4>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <User className="w-3 h-3 opacity-60" />
-              <span className="text-sm font-black uppercase font-display">{log.operatorName}</span>
+            <h4 className="text-[11px] font-black uppercase tracking-[0.6em] opacity-40 mb-2">{title}</h4>
+            <div className="flex items-center gap-4">
+              <User className="w-5 h-5 opacity-30" />
+              <span className="text-2xl font-black uppercase font-display tracking-tighter">{log.operatorName}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats Bento Grid */}
-      <div className="p-6 grid grid-cols-2 gap-4">
-        <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-100">
-          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">Design</p>
-          <p className="text-[11px] font-black text-slate-800 uppercase truncate leading-tight">{log.designName}</p>
-          <div className="flex items-center gap-1.5 mt-2 text-indigo-500">
-            <Hash className="w-3 h-3" />
-            <span className="text-[10px] font-black">{log.designStitch.toLocaleString()}</span>
+      <div className="p-10 grid grid-cols-2 gap-8">
+        <div className="bg-[#bde0fe]/10 p-8 rounded-[3rem] border border-white/60 shadow-soft-sm group-hover:bg-white transition-colors duration-500">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-3 h-6 rounded-full bg-blue-200" />
+            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Head Unit</p>
+          </div>
+          <p className="text-xl font-black text-slate-800 uppercase truncate leading-tight mb-6 tracking-tight">{log.designName}</p>
+          <div className="flex items-center gap-4 text-blue-600 bg-white px-6 py-3 rounded-[1.5rem] w-fit shadow-soft-sm">
+            <Hash className="w-5 h-5 opacity-50" />
+            <span className="text-base font-black font-mono">{log.designStitch.toLocaleString()}</span>
           </div>
         </div>
 
-        <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-100 flex flex-col justify-between">
+        <div className="bg-[#ffafcc]/10 p-8 rounded-[3rem] border border-white/60 shadow-soft-sm group-hover:bg-white transition-colors duration-500 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Frame</p>
-            <span className="text-[11px] font-black text-slate-800">{log.frame}</span>
+            <div className="flex items-center gap-4">
+              <div className="w-3 h-6 rounded-full bg-[#ffafcc]/40" />
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Cycles</p>
+            </div>
+            <span className="text-2xl font-black text-slate-800 font-mono tracking-tighter">{log.frame}</span>
           </div>
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100/50">
-            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Meters</p>
-            <span className="text-[11px] font-black text-emerald-600">{log.totalMeters}m</span>
+          <div className="flex items-center justify-between pt-6 border-t border-white/60">
+            <div className="flex items-center gap-4">
+              <div className="w-3 h-6 rounded-full bg-emerald-200" />
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Net Dist.</p>
+            </div>
+            <span className="text-2xl font-black text-emerald-600 font-mono tracking-tighter">{log.totalMeters}m</span>
           </div>
         </div>
 
         <div className={cn(
-          "col-span-2 p-6 rounded-[2rem] border flex flex-col items-center justify-center relative overflow-hidden",
-          isWinner ? "bg-emerald-50 border-emerald-100" :
-          isLoser ? "bg-rose-50 border-rose-100" : "bg-indigo-50/50 border-indigo-100/50"
+          "col-span-2 p-14 rounded-[4rem] border-none flex flex-col items-center justify-center relative overflow-hidden group/metric transition-all duration-700 bg-white soft-inset",
         )}>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3">Net Production</p>
-          <div className="flex items-baseline gap-2">
-            <h2 className={cn(
-              "text-4xl sm:text-5xl font-black font-display tracking-tighter",
-              isWinner ? "text-emerald-700" : isLoser ? "text-rose-700" : "text-slate-900"
+          <p className="text-[14px] font-black text-slate-400 uppercase tracking-[0.6em] mb-8 relative z-10">Telemetry Output</p>
+          <div className="flex items-center gap-10 relative z-10">
+            <div className={cn(
+              "text-7xl sm:text-9xl font-black font-display tracking-tighter",
+              isWinner ? "text-emerald-500" : isLoser ? "text-rose-400" : "text-slate-700"
             )}>
               {log.totalStitches.toLocaleString()}
-            </h2>
-            <Activity className={cn("w-5 h-5", isWinner ? "text-emerald-500" : isLoser ? "text-rose-500" : "text-indigo-500")} />
+            </div>
+            <div className={cn(
+              "w-20 h-20 rounded-[2.5rem] flex items-center justify-center shadow-soft bg-white",
+              isWinner ? "text-emerald-500" :
+              isLoser ? "text-rose-400" : "text-indigo-400"
+            )}>
+              <Activity className="w-10 h-10" />
+            </div>
+          </div>
+          <div className="mt-10 flex items-center gap-8">
+            <span className="w-16 h-0.5 bg-slate-100" />
+            <span className="text-[12px] font-bold text-slate-300 uppercase tracking-[0.5em] italic">Nexus Synched</span>
+            <span className="w-16 h-0.5 bg-slate-100" />
           </div>
         </div>
       </div>
@@ -565,15 +589,15 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
 
 function ActionButton({ icon: Icon, label, color, onClick }: { icon: any, label: string, color: string, onClick: (e: any) => void }) {
   const colors: Record<string, string> = {
-    indigo: "text-indigo-400 hover:text-white hover:bg-indigo-500",
-    rose: "text-rose-400 hover:text-white hover:bg-rose-500"
+    indigo: "text-blue-500",
+    rose: "text-rose-500"
   };
 
   return (
     <button 
       onClick={onClick}
       className={cn(
-        "bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-[2rem] sm:rounded-[2.5rem] w-20 h-20 sm:w-24 sm:h-24 flex flex-col items-center justify-center gap-1.5 sm:gap-2 transition-all active:scale-90 group/btn",
+        "pill-button rounded-[2rem] sm:rounded-[2.5rem] w-20 h-20 sm:w-24 sm:h-24 flex flex-col items-center justify-center gap-1.5 sm:gap-2 transition-all active:scale-90 group/btn",
         colors[color]
       )}
     >

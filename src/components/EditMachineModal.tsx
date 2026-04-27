@@ -60,21 +60,21 @@ export function EditMachineModal({ isOpen, onClose, onUpdate, item }: EditMachin
           onClick={onClose}
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[130] flex items-center justify-center p-6"
         >
-          <motion.div
+            <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 40 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 40 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white/95 backdrop-blur-2xl rounded-[3rem] shadow-2xl w-full max-w-2xl overflow-hidden border border-white/50 relative"
+            className="soft-card w-full max-w-2xl overflow-hidden relative"
           >
             {/* Design Element */}
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-indigo-500 to-purple-500" />
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-blue-500 to-indigo-500" />
             
-            <div className="px-10 pt-12 pb-6 flex justify-between items-start border-b border-slate-50">
+            <div className="px-10 pt-12 pb-6 flex justify-between items-start border-b border-white/60 bg-[#f6efe9]">
               <div>
-                <h2 className="text-3xl font-black text-slate-900 font-display tracking-tight leading-none uppercase italic">Modify Asset</h2>
+                <h2 className="text-3xl font-black text-slate-800 font-display tracking-tight leading-none uppercase italic">Modify Asset</h2>
                 <div className="flex items-center gap-3 mt-4">
-                  <div className="px-3 py-1 bg-slate-900 text-white rounded-lg font-black text-[9px] uppercase tracking-widest">
+                  <div className="px-3 py-1 bg-white shadow-soft-sm text-slate-700 rounded-lg font-black text-[9px] uppercase tracking-widest border border-white/60">
                     ID: {formData.id}
                   </div>
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -84,13 +84,13 @@ export function EditMachineModal({ isOpen, onClose, onUpdate, item }: EditMachin
               </div>
               <button 
                 onClick={onClose}
-                className="p-3 glass rounded-2xl hover:bg-slate-900 hover:text-white transition-all text-slate-400 active:scale-90"
+                className="p-4 pill-button rounded-[2rem] hover:text-rose-500 transition-all text-slate-400 active:scale-90"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto scrollbar-hide">
+            <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto scrollbar-hide bg-[#f6efe9]">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <FormGroup label="Asset Label" icon={Settings}>
                   <input name="name" required value={formData.name} onChange={handleChange} className="form-input-premium" />
@@ -104,21 +104,21 @@ export function EditMachineModal({ isOpen, onClose, onUpdate, item }: EditMachin
                   </select>
                 </FormGroup>
 
-                <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 p-6 soft-card border border-white">
                   <FormGroup label="Metric: Head" icon={Settings}>
-                    <input name="machineHead" type="number" required value={formData.machineHead} onChange={handleChange} className="form-input-premium bg-white" />
+                    <input name="machineHead" type="number" required value={formData.machineHead} onChange={handleChange} className="form-input-premium" />
                   </FormGroup>
 
                   <FormGroup label="Metric: Area" icon={LayoutGrid}>
-                    <input name="machineArea" type="number" required value={formData.machineArea} onChange={handleChange} className="form-input-premium bg-white" />
+                    <input name="machineArea" type="number" required value={formData.machineArea} onChange={handleChange} className="form-input-premium" />
                   </FormGroup>
 
                   <FormGroup label="Calculated m/f" icon={Ruler}>
-                    <input name="frameMeters" type="number" step="0.0001" readOnly value={formData.frameMeters} className="form-input-premium bg-white/50 font-black text-indigo-600 border-dashed cursor-default" />
+                    <input name="frameMeters" type="number" step="0.0001" readOnly value={formData.frameMeters} className="form-input-premium !bg-blue-50/50 font-black text-blue-600 border border-blue-200 cursor-default shadow-none" />
                   </FormGroup>
 
                   <FormGroup label="Operational Status" icon={Layers}>
-                    <select name="status" value={formData.status} onChange={handleChange} className="form-input-premium bg-white appearance-none">
+                    <select name="status" value={formData.status} onChange={handleChange} className="form-input-premium appearance-none">
                       <option value="IN_PROGRESS">Running</option>
                       <option value="DELAYED">Delayed</option>
                       <option value="QUALITY_CHECK">Quality Check</option>
@@ -131,7 +131,7 @@ export function EditMachineModal({ isOpen, onClose, onUpdate, item }: EditMachin
               <div className="pt-6">
                 <button
                   type="submit"
-                  className="w-full py-5 bg-slate-900 text-white rounded-[2rem] text-sm font-black shadow-2xl shadow-indigo-100 hover:bg-indigo-600 transition-all active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-[0.2em]"
+                  className="w-full py-5 pill-button-primary rounded-[2rem] text-sm font-black active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-[0.2em]"
                 >
                   Commit Asset Change
                 </button>

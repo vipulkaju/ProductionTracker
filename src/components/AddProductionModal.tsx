@@ -99,159 +99,204 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 40 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-2xl w-full max-w-4xl overflow-hidden border border-white/50 flex flex-col sm:flex-row max-h-[95vh] sm:max-h-[90vh]"
+            className="soft-card w-full max-w-5xl overflow-hidden flex flex-col sm:flex-row max-h-[95vh] sm:max-h-[85vh] relative"
           >
             {/* Sidebar with Date & Shift selection */}
-            <div className="w-full sm:w-80 bg-slate-900 text-white p-5 sm:p-8 space-y-5 sm:space-y-10 shrink-0 flex flex-col">
-              <div className="flex justify-between items-start sm:block">
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight leading-none">Recording</h2>
-                  <div className="flex items-center gap-2 mt-2 sm:mt-4">
-                    <div className="p-1 px-2 sm:px-3 bg-indigo-600 rounded-lg font-black text-[9px] sm:text-[10px] uppercase tracking-widest">{machineId}</div>
-                    <div className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest hidden xs:block">Telemetry Node</div>
+            <div className="w-full sm:w-80 bg-[#bde0fe] text-blue-900 p-6 sm:p-10 shrink-0 flex flex-col relative overflow-hidden border-b sm:border-b-0 sm:border-r border-white/40">
+              {/* Decorative Background Elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-3xl -mr-16 -mt-16" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/30 rounded-full blur-2xl -ml-12 -mb-12" />
+
+              <div className="relative z-10 space-y-8 flex flex-col h-full">
+                <div className="flex justify-between items-start sm:block">
+                  <div>
+                    <h2 className="text-2xl sm:text-4xl font-black font-display tracking-tight leading-none italic uppercase">
+                      Entry <span className="text-indigo-400">Node</span>
+                    </h2>
+                    <div className="flex items-center gap-2 mt-2 sm:mt-4">
+                      <div className="px-2 sm:px-3 py-1 bg-white/10 rounded-lg border border-white/10 font-black text-[9px] sm:text-[11px] uppercase tracking-widest text-indigo-300">
+                        {machineId}
+                      </div>
+                      <div className="h-1 w-1 rounded-full bg-slate-700" />
+                      <div className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] hidden xs:block">Global Registry</div>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={onClose}
+                    className="sm:hidden p-3 bg-white/30 rounded-xl hover:bg-white/50 transition-all text-blue-600 active:scale-90"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-6 sm:space-y-8 flex-1 overflow-y-auto sm:overflow-visible pr-2 sm:pr-0 scrollbar-hide py-2">
+                  <div className="p-4 sm:p-6 bg-white/30 rounded-3xl space-y-6">
+                    <FormGroup label="Log Interval (Date)" icon={Calendar} isDark>
+                      <input 
+                        name="date" 
+                        type="date" 
+                        required 
+                        value={productionDate || ''} 
+                        onChange={handleChange} 
+                        className="w-full pl-10 sm:pl-12 pr-4 sm:pr-6 py-3 sm:py-4 bg-[#f6efe9]/80 border border-white/50 rounded-xl sm:rounded-2xl text-[10px] sm:text-[11px] font-black uppercase text-blue-900 focus:border-white outline-none transition-all cursor-pointer shadow-soft-inset" 
+                      />
+                    </FormGroup>
+
+                    <FormGroup label="Current Deployment (Shift)" icon={Clock} isDark>
+                      <div className="flex sm:flex-col gap-3 pt-1">
+                        <ShiftToggle 
+                          active={currentShift === 'DAY'} 
+                          onClick={() => setCurrentShift('DAY')}
+                          icon={Clock}
+                          label="Day"
+                          color="amber"
+                        />
+                        <ShiftToggle 
+                          active={currentShift === 'NIGHT'} 
+                          onClick={() => setCurrentShift('NIGHT')}
+                          icon={Clock}
+                          label="Night"
+                          color="indigo"
+                        />
+                      </div>
+                    </FormGroup>
                   </div>
                 </div>
-                <button 
-                  onClick={onClose}
-                  className="sm:hidden p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-all text-white/50 active:scale-90"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
-              <div className="space-y-5 sm:space-y-8 flex-1 overflow-y-auto sm:overflow-visible pr-2 sm:pr-0 scrollbar-hide">
-                <FormGroup label="Log Date" icon={Calendar} isDark>
-                  <input 
-                    name="date" 
-                    type="date" 
-                    required 
-                    value={productionDate || ''} 
-                    onChange={handleChange} 
-                    className="w-full pl-10 sm:pl-12 pr-4 sm:pr-6 py-3 sm:py-4 bg-white/10 border-2 border-white/10 rounded-xl sm:rounded-2xl text-[10px] sm:text-[11px] font-black uppercase text-white focus:border-indigo-500 outline-none transition-all cursor-pointer" 
-                  />
-                </FormGroup>
-
-                <FormGroup label="Select Shift" icon={Clock} isDark>
-                  <div className="flex sm:flex-col gap-3 pt-2">
-                    <ShiftToggle 
-                      active={currentShift === 'DAY'} 
-                      onClick={() => setCurrentShift('DAY')}
-                      icon={Clock}
-                      label="Day Shift"
-                      color="amber"
-                    />
-                    <ShiftToggle 
-                      active={currentShift === 'NIGHT'} 
-                      onClick={() => setCurrentShift('NIGHT')}
-                      icon={Clock}
-                      label="Night Shift"
-                      color="indigo"
-                    />
+                <div className="hidden sm:block pt-6 border-t border-white/5">
+                  <div className="flex items-center gap-3 text-slate-500 mb-3">
+                    <div className="w-4 h-[2px] bg-indigo-500/50" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">Data Integrity Note</span>
                   </div>
-                </FormGroup>
-              </div>
-
-              <div className="hidden sm:flex pt-10 flex-1 items-end">
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] leading-relaxed">
-                  Enter production data for each shift. Records will be committed atomically.
-                </p>
+                  <p className="text-[9px] font-medium text-slate-500 uppercase tracking-widest leading-relaxed">
+                    Verify all metrics against machine telemetry before committing to registry.
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Main Form Content */}
             <div className={cn(
-              "flex-1 p-5 sm:p-12 overflow-y-auto w-full scrollbar-hide relative pb-24 sm:pb-12 transition-colors duration-500",
-              currentShift === 'DAY' ? 'bg-white' : 'bg-indigo-50/50'
+              "flex-1 p-6 sm:p-14 overflow-y-auto w-full scrollbar-hide relative pb-28 sm:pb-14 transition-all duration-700 bg-[#f6efe9]"
             )}>
               <button 
                 onClick={onClose}
-                className={cn(
-                  "hidden sm:block absolute top-6 right-6 p-3 rounded-2xl transition-all active:scale-90",
-                  currentShift === 'DAY' ? 'bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-900' : 'bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-900 shadow-sm'
-                )}
+                className="hidden sm:flex absolute top-8 right-8 p-4 pill-button rounded-2xl hover:text-rose-500 transition-all text-slate-400 active:scale-90 group"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" />
               </button>
               
-              <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-10 mt-2 sm:mt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8">
-                  <FormGroup label="Operator Identity" icon={User}>
-                    <input 
-                      name="operatorName" 
-                      required 
-                      value={shiftsData[currentShift].operatorName || ''} 
-                      onChange={handleChange} 
-                      placeholder="ENTER NAME"
-                      className="form-input-premium sm:form-input-premium !py-3 sm:!py-4 !pl-10 sm:!pl-12 !rounded-xl sm:!rounded-2xl" 
-                    />
-                  </FormGroup>
+              <form onSubmit={handleSubmit} className="space-y-10 sm:space-y-12">
+                <div className="space-y-8">
+                  {/* Section: Identity */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+                        <User className="w-4 h-4" />
+                      </div>
+                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">Identity Profile</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <FormGroup label="Operator Name" icon={User}>
+                        <input 
+                          name="operatorName" 
+                          required 
+                          value={shiftsData[currentShift].operatorName || ''} 
+                          onChange={handleChange} 
+                          placeholder="ENTER OPERATOR NAME"
+                          className="form-input-premium" 
+                        />
+                      </FormGroup>
 
-                  <FormGroup label="Design Specification" icon={FileText}>
-                    <input 
-                      name="designName" 
-                      required 
-                      value={shiftsData[currentShift].designName || ''} 
-                      onChange={handleChange} 
-                      placeholder="DESIGN ID"
-                      className="form-input-premium sm:form-input-premium !py-3 sm:!py-4 !pl-10 sm:!pl-12 !rounded-xl sm:!rounded-2xl" 
-                    />
-                  </FormGroup>
+                      <FormGroup label="Head" icon={FileText}>
+                        <input 
+                          name="designName" 
+                          required 
+                          value={shiftsData[currentShift].designName || ''} 
+                          onChange={handleChange} 
+                          placeholder="HEAD SERIAL ID"
+                          className="form-input-premium" 
+                        />
+                      </FormGroup>
+                    </div>
+                  </div>
 
-                  <div className="col-span-1 sm:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-slate-50">
-                    <FormGroup label="Stat St" icon={Activity}>
-                      <input 
-                        name="designStitch" 
-                        type="number" 
-                        required 
-                        value={shiftsData[currentShift].designStitch ?? 0} 
-                        onChange={handleChange} 
-                        className="form-input-premium sm:form-input-premium !py-3 sm:!py-4 !pl-10 sm:!pl-12 !rounded-xl sm:!rounded-2xl" 
-                      />
-                    </FormGroup>
-                    <FormGroup label="Frame Count" icon={Hash}>
-                      <input 
-                        name="frame" 
-                        type="number" 
-                        required 
-                        value={shiftsData[currentShift].frame ?? 0} 
-                        onChange={handleChange} 
-                        className="form-input-premium sm:form-input-premium !py-3 sm:!py-4 !pl-10 sm:!pl-12 !rounded-xl sm:!rounded-2xl" 
-                      />
-                    </FormGroup>
-                    <FormGroup label="Net Meters" icon={Plus}>
-                      <input 
-                        name="totalMeters" 
-                        type="number" 
-                        step="0.01" 
-                        required 
-                        value={shiftsData[currentShift].totalMeters ?? 0} 
-                        onChange={handleChange} 
-                        className="form-input-premium sm:form-input-premium !py-3 sm:!py-4 !pl-10 sm:!pl-12 !rounded-xl sm:!rounded-2xl" 
-                      />
-                    </FormGroup>
-                    <FormGroup label="Total Tich" icon={Activity}>
-                      <input 
-                        name="totalStitches" 
-                        type="number" 
-                        required 
-                        value={shiftsData[currentShift].totalStitches ?? 0} 
-                        onChange={handleChange} 
-                        className="form-input-premium sm:form-input-premium !py-3 sm:!py-4 !pl-10 sm:!pl-12 !rounded-xl sm:!rounded-2xl font-black text-indigo-600" 
-                      />
-                    </FormGroup>
+                  {/* Section: Metrics */}
+                  <div className="space-y-6 pt-6 sm:pt-8">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-100">
+                        <Activity className="w-4 h-4" />
+                      </div>
+                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">Production Metrics</h3>
+                    </div>
+
+                    <div className="soft-card p-6 sm:p-10 shadow-soft border border-white">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
+                        <div className="space-y-6">
+                          <FormGroup label="Design Stitches" icon={Activity}>
+                            <input 
+                              name="designStitch" 
+                              type="number" 
+                              required 
+                              value={shiftsData[currentShift].designStitch ?? 0} 
+                              onChange={handleChange} 
+                              className="form-input-premium" 
+                            />
+                          </FormGroup>
+                          <FormGroup label="Frame Iterations" icon={Hash}>
+                            <input 
+                              name="frame" 
+                              type="number" 
+                              required 
+                              value={shiftsData[currentShift].frame ?? 0} 
+                              onChange={handleChange} 
+                              className="form-input-premium" 
+                            />
+                          </FormGroup>
+                        </div>
+                        
+                        <div className="space-y-6">
+                          <FormGroup label="Calculated Meters" icon={Plus}>
+                            <input 
+                              name="totalMeters" 
+                              type="number" 
+                              step="0.01" 
+                              required 
+                              value={shiftsData[currentShift].totalMeters ?? 0} 
+                              onChange={handleChange} 
+                              className="form-input-premium" 
+                            />
+                          </FormGroup>
+                          <FormGroup label="Total Stitch Density" icon={Activity}>
+                            <input 
+                              name="totalStitches" 
+                              type="number" 
+                              required 
+                              value={shiftsData[currentShift].totalStitches ?? 0} 
+                              onChange={handleChange} 
+                              className="form-input-premium !border-blue-200 !bg-blue-50/50 text-blue-600 focus:!border-blue-300 shadow-none" 
+                            />
+                          </FormGroup>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-6 sm:pt-10">
+                <div className="pt-6 sm:pt-4">
                   <button
                     type="submit"
-                    className="group relative w-full py-4 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[2.5rem] text-[12px] sm:text-sm font-black shadow-2xl shadow-slate-200 hover:bg-indigo-600 hover:shadow-indigo-200 transition-all active:scale-[0.98] overflow-hidden"
+                    className="group relative w-full py-5 sm:py-7 pill-button-primary rounded-[2.5rem] sm:rounded-[3rem] text-[12px] sm:text-base font-black active:scale-[0.98] overflow-hidden border border-white/60"
                   >
-                    <div className="relative z-10 flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-[0.2em] sm:tracking-[0.3em]">
-                      Save Global Shift Records
+                    <div className="relative z-10 flex items-center justify-center gap-4 uppercase tracking-[0.4em]">
+                      <span>Finalize Registry Commit</span>
+                      <Plus className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-180 transition-transform duration-500" />
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </button>
+                  <p className="mt-6 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest sm:hidden">
+                    Scroll down for all fields
+                  </p>
                 </div>
               </form>
             </div>
@@ -263,21 +308,21 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
 }
 
 function ShiftToggle({ active, onClick, icon: Icon, label, color }: { active: boolean, onClick: () => void, icon: any, label: string, color: 'amber' | 'indigo' }) {
-  const activeClasses = color === 'amber' ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" : "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+  const activeClasses = color === 'amber' ? "bg-white text-slate-800 shadow-soft border-white/50" : "bg-white text-slate-800 shadow-soft border-white/50";
   
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "flex items-center justify-center sm:justify-start gap-2 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all border-2 flex-1 sm:flex-none",
-        active ? activeClasses + " border-transparent" : "bg-white/5 border-white/5 text-slate-500 hover:bg-white/10"
+        "flex items-center justify-center sm:justify-start gap-2 sm:gap-4 p-3 sm:p-5 rounded-xl sm:rounded-2xl transition-all border border-transparent flex-1 sm:flex-none",
+        active ? activeClasses : "bg-white/10 text-blue-900 border border-white/20 hover:bg-white/30 text-opacity-60"
       )}
     >
-      <div className={cn("p-1.5 sm:p-2 rounded-lg sm:rounded-xl", active ? "bg-white/20" : "bg-white/5")}>
-        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+      <div className={cn("p-1.5 sm:p-2 rounded-lg sm:rounded-xl", active ? "bg-slate-100 text-slate-600" : "bg-white/20 text-blue-900")}>
+        <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
       </div>
-      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest">{label}</span>
+      <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest">{label}</span>
     </button>
   );
 }

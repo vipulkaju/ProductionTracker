@@ -195,10 +195,12 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Loading PT System...</p>
+      <div className="min-h-screen bg-[#fcfaf8] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-6">
+          <div className="w-16 h-16 soft-card flex items-center justify-center animate-pulse">
+            <Box className="w-8 h-8 text-indigo-300" />
+          </div>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">Synching Nexus Core...</p>
         </div>
       </div>
     );
@@ -206,111 +208,109 @@ export default function App() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#fcfaf8] flex items-center justify-center p-4">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center space-y-8 border border-slate-200"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full soft-card p-10 text-center space-y-10"
         >
-          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-indigo-200">
-            <Box className="w-8 h-8 text-white" />
+          <div className="w-20 h-20 bg-white soft-shadow flex items-center justify-center mx-auto rounded-[2rem]">
+            <Box className="w-10 h-10 text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">PT PRODUCTION TRACKER</h1>
-            <p className="text-slate-500 mt-2 font-medium">Please sign in to access your dashboard</p>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase font-display">Nexus Core</h1>
+            <p className="text-slate-400 mt-3 font-bold text-xs uppercase tracking-widest leading-loose">Access Restricted to Verified Fleet Nodes</p>
           </div>
           <button 
             onClick={login}
             disabled={isLoggingIn}
-            className={`w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg hover:shadow-slate-200 active:scale-[0.98] ${isLoggingIn ? 'opacity-70 cursor-not-allowed' : 'hover:bg-slate-800'}`}
+            className={`w-full py-5 pill-button-primary rounded-[2.5rem] font-black uppercase text-[12px] tracking-[0.2em] flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-[0.98] ${isLoggingIn ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {isLoggingIn ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-blue-900 border-t-transparent rounded-full animate-spin" />
             ) : (
               <LogIn className="w-5 h-5" />
             )}
-            <span>{isLoggingIn ? 'Connecting...' : 'Connect with Google'}</span>
+            <span>{isLoggingIn ? 'Authorizing...' : 'Initialize Google Auth'}</span>
           </button>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Secure AES-256 Authentication</p>
+          <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.4em]">Quantum-Secure Gateway v4.2</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col transition-all relative">
+    <div className="min-h-screen text-slate-900 font-sans flex flex-col transition-all relative">
       <AddMachineModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onAdd={handleAddItem} 
       />
-      {/* Sleek Cinematic Header */}
-      <header className="glass border-b border-indigo-100/50 px-4 sm:px-10 py-4 sm:py-6 flex justify-between items-center z-50 sticky top-0 shrink-0 shadow-2xl shadow-indigo-500/10 overflow-hidden">
-        {/* Glow effect */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-3xl -translate-y-1/2 translate-x-1/2 rounded-full" />
-        
-        <div className="flex items-center gap-3 sm:gap-6 relative z-10">
+      {/* Sleek Header */}
+      <header className="px-4 sm:px-12 py-4 sm:py-8 flex justify-between items-center z-50 sticky top-0 shrink-0 w-full mx-auto bg-[#f6efe9]/80 backdrop-blur-xl border-b border-white">
+        <div className="flex justify-between items-center w-full max-w-[1600px] mx-auto gap-2 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-10 relative z-10 w-full sm:w-auto overflow-hidden">
           <motion.div 
-            whileHover={{ rotate: 180, scale: 1.1 }}
-            className="w-10 h-10 sm:w-14 sm:h-14 premium-gradient rounded-xl sm:rounded-[1.25rem] flex items-center justify-center shadow-xl shadow-indigo-200 border border-white/20"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-12 h-12 sm:w-24 sm:h-24 bg-[#f6efe9] shadow-soft rounded-[1.2rem] sm:rounded-[2.5rem] flex items-center justify-center border border-white/40 shrink-0"
           >
-            <Box className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            <Box className="w-6 h-6 sm:w-14 sm:h-14 text-[#ffafcc]" />
           </motion.div>
-          <div className="flex flex-col">
-            <h1 className="text-lg sm:text-3xl font-black font-display tracking-tight text-slate-900 leading-none uppercase italic">
-              Nexus<span className="text-indigo-600">Core</span>
+          <div className="flex flex-col min-w-0">
+            <h1 className="text-2xl sm:text-6xl font-black font-display tracking-tighter text-slate-800 leading-none truncate">
+              Production<span className="text-[#bde0fe]">Tracker</span>
             </h1>
-            <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5">
-              <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-[7px] sm:text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] sm:tracking-[0.3em]">Node v2.8</p>
+            <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-3">
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ffafcc] animate-pulse shrink-0" />
+              <p className="text-[8px] sm:text-[14px] text-slate-400 font-bold uppercase tracking-[0.2em] sm:tracking-[0.6em] truncate">Global Registry Interface</p>
             </div>
           </div>
         </div>
         
-        <div className="flex items-center gap-4 sm:gap-10 relative z-10">
-          <div className="hidden lg:flex items-center gap-2 bg-slate-100/50 p-1.5 rounded-2xl border border-slate-100">
+        <div className="flex items-center gap-4 sm:gap-20 relative z-10 shrink-0">
+          <div className="hidden lg:flex items-center bg-[#f6efe9] shadow-soft-sm p-3 rounded-[3rem] border border-white/60">
             <NavButton 
               active={currentView === 'dashboard'} 
               onClick={() => { setCurrentView('dashboard'); setSelectedMachineId(null); }}
               icon={LayoutDashboard}
-              label="Fleet Dashboard"
+              label="Fleet"
               color="indigo"
             />
             <NavButton 
               active={currentView === 'whatsapp'} 
               onClick={() => { setCurrentView('whatsapp'); setSelectedMachineId(null); }}
               icon={MessageSquare}
-              label="Transmission"
+              label="Comms"
               color="emerald"
             />
           </div>
-
-          <div className="flex items-center gap-4">
+          
+          <div className="flex items-center gap-4 sm:gap-8">
             <div className="hidden md:flex flex-col items-end">
-              <span className="text-xs font-black text-slate-900 uppercase tracking-tight font-display">{user.displayName}</span>
-              <button onClick={logout} className="text-[9px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-[0.2em] mt-0.5">Disconnect</button>
+              <span className="text-[14px] font-black text-slate-700 uppercase tracking-tight font-display">{user.displayName}</span>
+              <button onClick={logout} className="text-[10px] font-bold text-rose-300 hover:text-rose-400 transition-colors uppercase tracking-[0.4em] mt-1.5">Disconnect</button>
             </div>
             <motion.div 
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-white border-2 border-indigo-100 p-0.5 flex items-center justify-center shadow-lg shadow-indigo-100/50"
+              whileHover={{ scale: 1.1 }}
+              className="w-14 h-14 sm:w-20 sm:h-20 rounded-[2rem] sm:rounded-[2.2rem] bg-[#f6efe9] shadow-soft-sm p-1.5 flex items-center justify-center border border-white"
             >
               {user.photoURL ? (
-                <img src={user.photoURL} alt={user.displayName || 'User'} className="w-full h-full rounded-xl object-cover" />
+                <img src={user.photoURL} alt={user.displayName || 'User'} className="w-full h-full rounded-[1.6rem] sm:rounded-[1.8rem] object-cover" />
               ) : (
-                <div className="w-full h-full rounded-xl premium-gradient flex items-center justify-center text-white font-black text-lg">
+                <div className="w-full h-full rounded-[1.6rem] sm:rounded-[1.8rem] bg-[#bde0fe] flex items-center justify-center text-blue-900 font-black text-xl sm:text-2xl">
                   {(user.displayName || 'U').charAt(0)}
                 </div>
               )}
             </motion.div>
           </div>
         </div>
+        </div>
       </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col xl:container xl:mx-auto">
-        {/* Real-time Metrics Bar - REMOVED AS PER USER REQUEST */}
-        
-        <main className="flex-1 p-4 sm:p-8 space-y-8 scroll-smooth">
+      <div className="flex-1 flex flex-col w-full max-w-[1600px] mx-auto">
+        <main className="flex-1 p-4 sm:p-12 space-y-12 scroll-smooth">
           <AnimatePresence mode="wait">
             {selectedMachine ? (
               <MachineDetail 
@@ -340,45 +340,68 @@ export default function App() {
                   },
                   exit: { opacity: 0, y: -20 }
                 }}
-                className="space-y-8"
+                className="space-y-12"
               >
-                {/* Lines Status Overview */}
-                <section className="space-y-6 sm:space-y-10">
-                  <div className="flex justify-end border-b border-slate-100 pb-6 sm:pb-8">
+                {/* Hero Section */}
+                <section className="space-y-10">
+                  <div className="flex flex-col sm:flex-row sm:items-end justify-end gap-12">
+                    
                     <button 
                       onClick={() => setIsModalOpen(true)}
-                      className="w-full sm:w-auto px-6 py-4 sm:px-10 sm:py-5 premium-gradient text-white rounded-2xl sm:rounded-[2rem] hover:scale-[1.03] transition-all font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] shadow-xl shadow-indigo-100 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 group shrink-0"
+                      className="pill-button w-full sm:w-auto px-16 py-8 text-rose-900 rounded-[3.5rem] font-black text-xs uppercase tracking-[0.5em] flex items-center justify-center gap-6 group"
                     >
-                      <Plus className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:rotate-180 duration-500" />
-                      <span>Add New Machine</span>
+                      <Plus className="w-8 h-8 transition-transform group-hover:rotate-180 duration-700" />
+                      <span>Deploy New Asset</span>
                     </button>
                   </div>
 
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+
                   {isInitialLoading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                      {[1, 2, 3, 4, 5, 6].map(i => (
-                        <div key={i} className="h-72 bg-white rounded-[2.5rem] border border-slate-100 animate-pulse" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                      {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="h-80 bg-white rounded-[2.5rem] border border-slate-100 animate-pulse" />
                       ))}
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-32">
+                    <motion.div 
+                      variants={{
+                        hidden: { opacity: 0 },
+                        show: {
+                          opacity: 1,
+                          transition: {
+                            staggerChildren: 0.1
+                          }
+                        }
+                      }}
+                      initial="hidden"
+                      animate="show"
+                      className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8 pb-32"
+                    >
                       <AnimatePresence>
                         {filteredItems.map((item) => (
-                          <ProductionCard 
-                            key={item.id} 
-                            item={item} 
-                            onDelete={() => setItemToDelete(item)} 
-                            onEdit={() => setItemToEdit(item)}
-                            onAddProduction={handleAddProduction}
-                            onClick={() => setSelectedMachineId(item.id)}
-                          />
+                          <motion.div
+                            key={item.id}
+                            variants={{
+                              hidden: { opacity: 0, y: 20, scale: 0.95 },
+                              show: { opacity: 1, y: 0, scale: 1 }
+                            }}
+                          >
+                            <ProductionCard 
+                              item={item} 
+                              onDelete={() => setItemToDelete(item)} 
+                              onEdit={() => setItemToEdit(item)}
+                              onAddProduction={handleAddProduction}
+                              onClick={() => setSelectedMachineId(item.id)}
+                            />
+                          </motion.div>
                         ))}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   )}
 
                   {!isInitialLoading && filteredItems.length === 0 && (
-                    <div className="py-32 glass rounded-[3rem] border-dashed border-2 border-slate-200 flex flex-col items-center justify-center text-center">
+                    <div className="py-32 soft-card rounded-[3rem] border border-white flex flex-col items-center justify-center text-center">
                       <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-6">
                         <Activity className="w-10 h-10 text-slate-300" />
                       </div>
@@ -425,6 +448,22 @@ export default function App() {
   );
 }
 
+function FilterButton({ children, active, onClick }: { children: React.ReactNode, active: boolean, onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={cn(
+        "px-6 py-4 rounded-[2rem] text-[11px] font-black transition-all cursor-pointer uppercase tracking-[0.3em] relative group flex-1 sm:flex-none text-center shadow-soft-sm hover:shadow-soft active:scale-95",
+        active 
+          ? "bg-slate-800 text-white" 
+          : "bg-[#fcfaf8] text-slate-300 hover:text-slate-500"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 function MobileNavigation({ currentFilter, onFilterChange, onAdd, onLogout, currentView, onViewChange }: { 
   currentFilter: ProductionStatus | "ALL", 
   onFilterChange: (f: ProductionStatus | "ALL") => void,
@@ -436,7 +475,7 @@ function MobileNavigation({ currentFilter, onFilterChange, onAdd, onLogout, curr
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="sm:hidden fixed bottom-6 right-6 z-[60] flex flex-col items-end gap-4">
+    <div className="sm:hidden fixed bottom-8 right-8 z-[60] flex flex-col items-end gap-6">
       <AnimatePresence>
         {isOpen && (
           <>
@@ -445,66 +484,54 @@ function MobileNavigation({ currentFilter, onFilterChange, onAdd, onLogout, curr
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[59]"
+              className="fixed inset-0 bg-[#f4f1ee]/80 backdrop-blur-md z-[59]"
             />
             <motion.div
-              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              initial={{ scale: 0.8, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 20 }}
-              className="absolute bottom-20 right-0 w-64 bg-white rounded-3xl shadow-2xl overflow-hidden z-[60] border border-slate-200"
+              exit={{ scale: 0.8, opacity: 0, y: 40 }}
+              className="absolute bottom-24 right-0 w-80 bg-[#fcfaf8] rounded-[3.5rem] shadow-soft overflow-hidden z-[60] border border-white/60 p-6"
             >
-              <div className="p-4 space-y-4">
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Navigation</p>
-                  <div className="grid grid-cols-1 gap-2">
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300 px-3">Registry Nodes</p>
+                  <div className="grid grid-cols-1 gap-4">
                     <button 
                       onClick={() => { onViewChange('dashboard'); setIsOpen(false); }}
                       className={cn(
-                        "w-full flex items-center gap-3 p-3 rounded-2xl font-bold text-sm",
-                        currentView === 'dashboard' ? "bg-indigo-50 text-indigo-600" : "bg-slate-50 text-slate-600"
+                        "w-full flex items-center gap-4 p-5 rounded-[2rem] font-bold text-sm transition-all",
+                        currentView === 'dashboard' ? "bg-[#bde0fe] text-blue-900 shadow-soft-sm" : "bg-white text-slate-400"
                       )}
                     >
-                      <LayoutDashboard className="w-4 h-4" />
-                      <span>Dashboard</span>
+                      <LayoutDashboard className="w-5 h-5" />
+                      <span>Fleet Control</span>
                     </button>
                     <button 
                       onClick={() => { onViewChange('whatsapp'); setIsOpen(false); }}
                       className={cn(
-                        "w-full flex items-center gap-3 p-3 rounded-2xl font-bold text-sm",
-                        currentView === 'whatsapp' ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-600"
+                        "w-full flex items-center gap-4 p-5 rounded-[2rem] font-bold text-sm transition-all",
+                        currentView === 'whatsapp' ? "bg-[#ffafcc] text-rose-900 shadow-soft-sm" : "bg-white text-slate-400"
                       )}
                     >
-                      <MessageSquare className="w-4 h-4" />
-                      <span>WhatsApp Report</span>
+                      <MessageSquare className="w-5 h-5" />
+                      <span>Comms Hub</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Actions</p>
-                  <button 
-                    onClick={() => { onAdd(); setIsOpen(false); }}
-                    className="w-full flex items-center gap-3 p-3 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-sm"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add New Machine</span>
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Quick Filters</p>
+                <div className="space-y-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300 px-3">Local Filters</p>
                   <div className="grid grid-cols-1">
-                    <FilterOption active={currentFilter === "ALL"} onClick={() => { onFilterChange("ALL"); setIsOpen(false); }}>All Machines</FilterOption>
+                    <FilterOption active={currentFilter === "ALL"} onClick={() => { onFilterChange("ALL"); setIsOpen(false); }}>All Operational Assets</FilterOption>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Account</p>
+                <div className="space-y-4 pt-4 border-t border-slate-100">
                   <button 
                     onClick={() => { onLogout(); setIsOpen(false); }}
-                    className="w-full flex items-center gap-3 p-3 bg-slate-50 text-slate-600 rounded-2xl font-bold text-sm"
+                    className="w-full flex items-center gap-4 p-5 pill-button-danger rounded-[2rem] font-bold text-sm"
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
+                    <LogOut className="w-5 h-5" />
+                    <span>Disconnect Node</span>
                   </button>
                 </div>
               </div>
@@ -518,34 +545,18 @@ function MobileNavigation({ currentFilter, onFilterChange, onAdd, onLogout, curr
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-colors z-[61] relative",
-          isOpen ? "bg-slate-900 text-white" : "bg-indigo-600 text-white"
+          "w-20 h-20 rounded-[2.5rem] flex items-center justify-center transition-all z-[61] relative border",
+          isOpen ? "bg-white border-white/60 shadow-soft" : "bg-[#f6efe9] border-white/60 shadow-soft"
         )}
       >
         <motion.div
           animate={{ rotate: isOpen ? 45 : 0 }}
-          transition={{ type: "spring", damping: 12 }}
+          transition={{ type: "spring", damping: 10 }}
         >
-          <Plus className="w-7 h-7" />
+          <Plus className={cn("w-10 h-10 transition-colors", isOpen ? "text-slate-400" : "text-[#ffafcc]")} />
         </motion.div>
       </motion.button>
     </div>
-  );
-}
-
-function FilterOption({ children, active, onClick }: { children: React.ReactNode, active: boolean, onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className={cn(
-        "p-2.5 rounded-xl text-[11px] font-black uppercase tracking-tight transition-all text-left",
-        active 
-          ? "bg-slate-900 text-white" 
-          : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-      )}
-    >
-      {children}
-    </button>
   );
 }
 
@@ -567,6 +578,22 @@ function ActivityItem({ time, title, desc, type }: { time: string, title: string
   );
 }
 
+function FilterOption({ children, active, onClick }: { children: React.ReactNode, active: boolean, onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={cn(
+        "p-5 rounded-[2rem] text-[12px] font-black uppercase tracking-widest transition-all text-left border border-transparent",
+        active 
+          ? "bg-white text-slate-800 shadow-soft border-white/60" 
+          : "bg-[#fcfaf8] text-slate-400 hover:bg-white"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 function NavButton({ active, onClick, icon: Icon, label, color }: { 
   active: boolean, 
   onClick: () => void, 
@@ -575,42 +602,24 @@ function NavButton({ active, onClick, icon: Icon, label, color }: {
   color: 'indigo' | 'emerald' 
 }) {
   const activeClasses = color === 'indigo' 
-    ? "premium-gradient text-white shadow-xl shadow-indigo-200" 
-    : "bg-emerald-600 text-white shadow-xl shadow-emerald-200";
+    ? "bg-[#bde0fe] text-blue-900 shadow-soft-sm" 
+    : "bg-[#ffafcc] text-rose-900 shadow-soft-sm";
 
   return (
     <button 
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
-        active ? activeClasses : "text-slate-400 hover:text-indigo-600 hover:bg-white"
+        "flex items-center gap-4 px-10 py-5 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.4em] transition-all duration-700 group relative overflow-hidden active:scale-95",
+        active ? activeClasses : "text-slate-300 hover:text-slate-500"
       )}
     >
-      <Icon className="w-4 h-4" />
-      <span>{label}</span>
-    </button>
-  );
-}
-
-function FilterButton({ children, active, onClick }: { children: React.ReactNode, active: boolean, onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className={cn(
-        "px-4 sm:px-6 py-2sm:py-2.5 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black transition-all whitespace-nowrap cursor-pointer uppercase tracking-[0.1em] sm:tracking-[0.2em] relative group flex-1 sm:flex-none text-center",
-        active 
-          ? "bg-slate-900 text-white shadow-xl shadow-slate-200 scale-105" 
-          : "bg-transparent text-slate-400 hover:text-slate-900 hover:bg-slate-100/50"
-      )}
-    >
-      {active && (
-        <motion.div
-          layoutId="activeFilter"
-          className="absolute inset-0 bg-slate-900 rounded-2xl -z-10"
-          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-        />
-      )}
-      {children}
+      <motion.div
+        animate={active ? { scale: [1, 1.1, 1] } : {}}
+        transition={{ duration: 2, repeat: active ? Infinity : 0 }}
+      >
+        <Icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", active ? "text-current" : "text-slate-300")} />
+      </motion.div>
+      <span className="relative z-10">{label}</span>
     </button>
   );
 }

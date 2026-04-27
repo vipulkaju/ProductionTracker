@@ -137,67 +137,66 @@ export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
       className="space-y-8 pb-32"
     >
       {/* Header Panel */}
-      <div className="glass rounded-3xl sm:rounded-[3rem] p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 border-white/40 shadow-xl overflow-hidden relative">
-        <div className="absolute top-0 right-0 p-12 bg-emerald-500/5 blur-3xl rounded-full translate-x-12 -translate-y-12" />
+      <div className="bg-[#fcfaf8] rounded-[3.5rem] p-10 flex flex-col sm:flex-row items-center justify-between gap-8 border border-white/60 shadow-soft overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-16 bg-[#ffafcc]/5 blur-[100px] rounded-full translate-x-12 -translate-y-12" />
         
-        <div className="flex items-center gap-4 sm:gap-6 relative z-10 w-full sm:w-auto">
+        <div className="flex items-center gap-6 relative z-10 w-full sm:w-auto">
           <button 
             onClick={onBack}
-            className="p-3 sm:p-4 glass rounded-2xl hover:bg-white transition-all text-slate-800 shadow-sm active:scale-90"
+            className="p-5 sm:p-6 pill-button rounded-[2rem] transition-all text-slate-800 active:scale-90"
           >
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ChevronLeft className="w-8 h-8" />
           </button>
           <div>
-            <h2 className="text-xl sm:text-3xl font-black text-slate-900 font-display tracking-tight leading-none uppercase italic">Report Node</h2>
-            <div className="flex items-center gap-2 mt-2 sm:mt-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Transmission Ready</p>
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-800 font-display tracking-tight leading-none uppercase italic">Report Node</h2>
+            <div className="flex items-center gap-4 mt-4">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_2px_rgba(52,211,153,0.3)]" />
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em]">Transmission Ready</p>
             </div>
           </div>
         </div>
 
         <div className="relative group w-full sm:w-auto">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-slate-900 text-white rounded-lg sm:rounded-xl shadow-lg z-10">
-            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <div className="absolute left-5 top-1/2 -translate-y-1/2 p-3 bg-slate-800 text-white rounded-2xl shadow-soft z-10">
+            <Calendar className="w-5 h-5" />
           </div>
           <input 
             type="date" 
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full sm:w-auto pl-14 sm:pl-16 pr-6 sm:pr-8 py-4 sm:py-5 bg-white border-2 border-slate-100 rounded-2xl sm:rounded-[2rem] text-[12px] sm:text-sm font-black text-slate-900 focus:ring-8 focus:ring-slate-900/5 focus:border-slate-900 transition-all shadow-md outline-none uppercase tracking-widest cursor-pointer"
+            className="w-full sm:w-auto pl-20 pr-10 py-6 form-input-premium bg-white cursor-pointer"
           />
         </div>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="h-64 glass rounded-3xl sm:rounded-[2.5rem] border-white/30 animate-pulse border-2" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {reports.map((report) => (
+      {/* Loading & Content Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {loading ? (
+          [1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="h-80 bg-white rounded-[3.5rem] border border-white/60 animate-pulse shadow-soft" />
+          ))
+        ) : (
+          reports.map((report) => (
             <motion.div 
               key={report.machine.id}
-              whileHover={{ y: -8 }}
-              className="glass rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 shadow-xl space-y-5 sm:space-y-6 border-white/60 relative group border-2 card-shadow"
+              whileHover={{ y: -10 }}
+              className="soft-card p-10 space-y-8 border border-white transition-all duration-500 group relative"
             >
-              <div className="flex items-center gap-4 sm:gap-5 border-b border-slate-100 pb-4 sm:pb-5">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900 text-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group-hover:rotate-0 transition-transform">
-                  <Box className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
+                <div className="w-14 h-14 bg-slate-800 text-white rounded-[1.8rem] flex items-center justify-center shadow-soft-sm rotate-6 group-hover:rotate-0 transition-transform duration-500">
+                  <Box className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase font-display leading-none tracking-tight">{report.machine.name}</h3>
-                  <div className="flex items-center gap-2 mt-1.5 sm:mt-2">
-                    <span className="text-[8px] sm:text-[9px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded-md">
+                  <h3 className="text-xl font-black text-slate-800 uppercase font-display leading-none tracking-tight">{report.machine.name}</h3>
+                  <div className="flex items-center gap-3 mt-3">
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] bg-[#bde0fe]/30 px-4 py-1.5 rounded-full">
                       {report.machine.category}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-5">
+              <div className="space-y-6">
                 <ShiftSummary 
                   shift="DAY" 
                   log={report.dayShift} 
@@ -212,28 +211,26 @@ export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
                 />
               </div>
             </motion.div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 px-6 w-full max-w-2xl">
+      <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 px-8 w-full max-w-2xl">
         <button 
           onClick={handleShare}
           disabled={loading || reports.length === 0}
-          className="group relative w-full py-6 bg-emerald-600 text-white rounded-[2.5rem] font-black text-xs sm:text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-4 shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden"
+          className="group relative w-full py-6 sm:py-8 pill-button-success rounded-[3.5rem] font-black text-[12px] sm:text-sm uppercase tracking-[0.5em] flex items-center justify-center gap-6 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden border border-white/60 active:scale-[0.98]"
         >
-          <div className="relative z-10 flex items-center gap-3">
-            <MessageSquare className="w-6 h-6" />
-            <span>Generate & Push Transmission</span>
+          <div className="relative z-10 flex items-center gap-4">
+            <Send className="w-6 h-6 sm:w-8 sm:h-8 group-hover:translate-x-1 transition-transform" />
+            <span>Broadcast Transmission</span>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
       </div>
 
       {!loading && reports.length === 0 && (
-        <div className="py-40 flex flex-col items-center justify-center text-center space-y-6">
-          <div className="p-8 bg-slate-100 rounded-[2.5rem] shadow-inner">
+        <div className="py-40 flex flex-col items-center justify-center text-center space-y-6 soft-card border border-white mt-12 max-w-2xl mx-auto">
+          <div className="p-8 soft-inset bg-white rounded-[2.5rem]">
             <Box className="w-16 h-16 text-slate-300" />
           </div>
           <div>
