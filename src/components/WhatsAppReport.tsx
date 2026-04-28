@@ -231,9 +231,9 @@ function ShiftSummary({ shift, log, icon: Icon, color }: {
 }) {
   if (!log) {
     return (
-      <div className="bg-slate-50/50 rounded-[2rem] p-5 border-2 border-dashed border-slate-100 flex items-center justify-between opacity-50 grayscale transition-all">
+      <div className="bg-slate-50/50 rounded-xl p-5 border-2 border-dashed border-slate-100 flex items-center justify-between opacity-50 grayscale transition-all">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-slate-100 rounded-xl">
+          <div className="p-2 bg-slate-100 rounded-lg">
             <Icon className="w-4 h-4 text-slate-400" />
           </div>
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{shift} SHIFT</span>
@@ -247,7 +247,7 @@ function ShiftSummary({ shift, log, icon: Icon, color }: {
 
   return (
     <div className={cn(
-      "rounded-[2rem] p-5 border-2 transition-all group/shift",
+      "rounded-xl p-5 border-2 transition-all group/shift",
       isDay ? "bg-amber-50/20 border-amber-50 shadow-sm" : "bg-slate-50 border-slate-100"
     )}>
       <div className="flex items-center justify-between mb-4">

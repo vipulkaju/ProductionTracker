@@ -18,44 +18,46 @@
   }
 }
 
-.soft-card {
-  @apply bg-[#f6efe9] rounded-[3.5rem] shadow-soft border border-white/40 transition-all duration-500 overflow-hidden;
-}
+@layer components {
+  .soft-card {
+    @apply bg-[#f6efe9] rounded-[3.5rem] shadow-soft border border-white/40 transition-all duration-500 overflow-hidden;
+  }
 
-.soft-shadow {
-  @apply shadow-soft;
-}
+  .soft-shadow {
+    @apply shadow-soft;
+  }
 
-.soft-shadow-sm {
-  @apply shadow-soft-sm;
-}
+  .soft-shadow-sm {
+    @apply shadow-soft-sm;
+  }
 
-.soft-inset {
-  @apply shadow-soft-inset;
-}
+  .soft-inset {
+    @apply shadow-soft-inset;
+  }
 
-.bento-card {
-  @apply bg-[#f6efe9] rounded-[3.5rem] shadow-soft transition-all duration-500 overflow-hidden border border-white/40;
-}
+  .bento-card {
+    @apply bg-[#f6efe9] rounded-[2rem] shadow-soft transition-all duration-500 overflow-hidden border border-white/40;
+  }
 
-.pill-button {
-  @apply bg-[#f6efe9] shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/40;
-}
+  .pill-button {
+    @apply bg-[#f6efe9] shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/40;
+  }
 
-.pill-button-primary {
-  @apply bg-[#bde0fe] text-blue-900 shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/60;
-}
+  .pill-button-primary {
+    @apply bg-[#bde0fe] text-blue-900 shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/60;
+  }
 
-.pill-button-success {
-  @apply bg-[#bdfedb] text-emerald-900 shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/60;
-}
+  .pill-button-success {
+    @apply bg-[#bdfedb] text-emerald-900 shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/60;
+  }
 
-.pill-button-danger {
-  @apply bg-[#fedbdc] text-rose-900 shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/60;
-}
+  .pill-button-danger {
+    @apply bg-[#fedbdc] text-rose-900 shadow-soft hover:shadow-soft-inset active:scale-95 transition-all duration-500 border border-white/60;
+  }
 
-.form-input-premium {
-  @apply w-full pl-14 pr-6 py-4 bg-[#f6efe9] shadow-soft-inset rounded-[2.5rem] text-sm font-bold focus:ring-0 outline-none transition-all placeholder:text-slate-400 border border-transparent focus:border-white/40;
+  .form-input-premium {
+    @apply w-full pl-14 pr-6 py-4 bg-[#f6efe9] shadow-soft-inset rounded-[2.5rem] text-sm font-bold focus:ring-0 outline-none transition-all placeholder:text-slate-400 border border-transparent focus:border-white/40;
+  }
 }
 
 .status-glow-emerald {
