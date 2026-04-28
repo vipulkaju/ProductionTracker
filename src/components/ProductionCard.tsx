@@ -36,7 +36,7 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
         exit={{ opacity: 0, scale: 0.9 }}
         whileHover={{ y: -4, transition: { duration: 0.2 } }}
         onClick={() => setShowActions(!showActions)}
-        className="bento-card relative flex flex-col transition-all cursor-pointer group h-full shadow-soft sm:min-h-[320px] rounded-sm sm:rounded-md overflow-hidden"
+        className="bento-card relative flex flex-col transition-all cursor-pointer group h-full sm:min-h-[320px] overflow-hidden"
       >
         {/* Accents & Decorative Background */}
         <div className={cn(
@@ -137,7 +137,7 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
           </div>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 shrink-0">
-            <div className="bg-white/70 p-3 sm:p-4 rounded-sm sm:rounded-md flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
+            <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
                <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
                 {item.machineHead ? "Head" : "Qty"}
               </p>
@@ -146,7 +146,7 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
                </span>
             </div>
             
-            <div className="bg-white/70 p-3 sm:p-4 rounded-sm sm:rounded-md flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
+            <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
               <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
                 {item.machineArea ? "Area" : "Lead"}
               </p>
@@ -157,7 +157,7 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
           </div>
 
           <div className="mt-auto">
-            <div className="bg-white/80 p-2 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between rounded-sm sm:rounded-md border border-slate-100/60 shadow-sm gap-1.5 sm:gap-0">
+            <div className="bg-white/80 p-2 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border border-slate-100/60 shadow-sm gap-1.5 sm:gap-0">
               <div className="flex items-baseline justify-between sm:justify-start gap-1 w-full sm:w-auto px-1 sm:px-0">
                 <span className="text-[8px] sm:text-[11px] font-black text-slate-400 uppercase tracking-widest shrink-0">
                   Frame

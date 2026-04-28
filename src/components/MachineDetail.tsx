@@ -140,67 +140,19 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full group-hover:bg-indigo-600/10 transition-colors duration-1000 translate-x-1/3 -translate-y-1/3" />
         
         <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-10 relative z-10 w-full sm:w-auto">
-          <button 
-            onClick={onBack}
-            className="p-5 sm:p-6 pill-button rounded-[2rem] hover:text-rose-500 transition-all text-slate-800 active:scale-90 self-start sm:self-center"
-          >
-            <ArrowLeft className="w-6 h-6 sm:w-8 sm:h-8" />
-          </button>
-          
           <div className="flex flex-col text-center sm:text-left">
-            <div className="flex items-center justify-center sm:justify-start gap-3 mb-4">
-              <span className="px-3 py-1 bg-slate-900 text-white rounded-lg font-black text-[9px] sm:text-[10px] uppercase tracking-[0.3em] shadow-lg shadow-slate-200">
-                ACTIVE NODE {item.id}
-              </span>
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/30" />
-              </div>
-            </div>
-            <h2 className="text-4xl sm:text-7xl font-black text-slate-900 font-display tracking-tighter leading-tight sm:leading-none uppercase italic">
-              {item.name.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-indigo-600">{word}</span> : word + ' ')}
-            </h2>
-            <div className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-6">
-              <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-100 shadow-sm">
-                <Box className="w-4 h-4 text-indigo-500" />
-                <span className="text-[11px] sm:text-xs font-black text-slate-600 uppercase tracking-widest">{item.category}</span>
-              </div>
-              <StatusBadge status={item.status} className="px-5 py-2.5 text-[10px] sm:text-[11px] shadow-lg" />
+            <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-6">
+              <h2 className="text-5xl sm:text-8xl font-black text-slate-800 font-display tracking-tighter leading-tight uppercase italic drop-shadow-sm pr-2">
+                {item.id}
+              </h2>
+              {item.machineHead && (
+                <span className="text-4xl sm:text-7xl font-black text-indigo-500 font-display uppercase italic tracking-tighter self-center sm:self-end sm:mb-1 drop-shadow-sm">
+                  HEAD {item.machineHead}
+                </span>
+              )}
             </div>
           </div>
         </div>
-
-        <div className="flex-1" />
-        
-        <div className="hidden lg:flex items-center gap-8 mr-12 relative z-10">
-          <div className="flex flex-col items-end">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Efficiency Rating</p>
-            <h4 className="text-4xl font-black text-slate-900 font-mono tracking-tighter">{item.progress}%</h4>
-          </div>
-          <div className="w-px h-16 bg-slate-100" />
-          {item.frameMeters && (
-            <div className="flex flex-col items-end">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Max Payload Cap</p>
-              <h4 className="text-4xl font-black text-indigo-600 font-mono italic tracking-tighter">{item.frameMeters}m</h4>
-            </div>
-          )}
-        </div>
-
-        <button 
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex lg:hidden w-full items-center justify-center gap-4 py-6 premium-gradient text-white rounded-[2.5rem] transition-all font-black text-sm uppercase tracking-[0.3em] shadow-2xl relative z-10"
-        >
-          <Plus className="w-6 h-6" />
-          <span>Synchronize Record</span>
-        </button>
-
-        <button 
-          onClick={() => setIsAddModalOpen(true)}
-          className="hidden lg:flex items-center gap-4 px-10 py-7 premium-gradient text-white rounded-[2.5rem] hover:scale-[1.05] transition-all font-black text-sm uppercase tracking-[0.3em] shadow-2xl relative z-10 group"
-        >
-          <Plus className="w-6 h-6 group-hover:rotate-180 transition-transform duration-700" />
-          <span>Synchronize Record</span>
-        </button>
       </div>
 
 
@@ -340,7 +292,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
       />
 
       {/* Mobile FAB for Detail View Actions */}
-      <div className="sm:hidden fixed bottom-24 right-6 z-[60]">
+      <div className="fixed bottom-24 right-6 z-[60]">
         <DetailMobileActions 
           onAdd={() => setIsAddModalOpen(true)}
           onDelete={() => onDeleteMachine(item.id)}

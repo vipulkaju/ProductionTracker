@@ -262,8 +262,9 @@ export default function App() {
             <Box className="w-6 h-6 sm:w-14 sm:h-14 text-[#ffafcc]" />
           </motion.div>
           <div className="flex flex-col min-w-0">
-            <h1 className="text-xl sm:text-6xl font-black font-display tracking-tighter text-slate-800 leading-none flex flex-wrap">
-              <span>Production</span><span className="text-[#bde0fe]">Tracker</span>
+            <h1 className="text-xl sm:text-6xl font-black font-display tracking-tighter leading-none flex flex-wrap">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500">Production</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">Tracker</span>
             </h1>
           </div>
         </div>
@@ -347,7 +348,7 @@ export default function App() {
                     
                     <button 
                       onClick={() => setIsModalOpen(true)}
-                      className="pill-button w-full sm:w-auto px-16 py-8 text-rose-900 rounded-[3.5rem] font-black text-xs uppercase tracking-[0.5em] flex items-center justify-center gap-6 group"
+                      className="w-full sm:w-auto px-12 py-6 text-indigo-900 bg-gradient-to-tr from-[#bdfedb] via-[#bde0fe] to-[#ffafcc] rounded-full shadow-lg shadow-blue-500/20 font-black text-xs uppercase tracking-[0.5em] flex items-center justify-center gap-4 group hover:scale-105 active:scale-95 transition-all"
                     >
                       <Plus className="w-8 h-8 transition-transform group-hover:rotate-180 duration-700" />
                       <span>Deploy New Asset</span>

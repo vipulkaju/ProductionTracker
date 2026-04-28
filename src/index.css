@@ -13,8 +13,14 @@
 
 @layer base {
   body {
-    @apply font-sans text-slate-800 overflow-x-hidden min-h-screen relative selection:bg-[#ffafcc]/40;
-    background: #f6efe9;
+    @apply font-sans text-slate-800 overflow-x-hidden min-h-screen relative selection:bg-pink-500/40;
+    background-color: #f6efe9;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(255, 175, 204, 0.4) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(189, 224, 254, 0.6) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(251, 239, 204, 0.6) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(200, 150, 255, 0.4) 0%, transparent 30%);
+    background-attachment: fixed;
   }
 }
 
@@ -36,7 +42,7 @@
   }
 
   .bento-card {
-    @apply bg-[#f6efe9] rounded-[2rem] shadow-soft transition-all duration-500 overflow-hidden border border-white/40;
+    @apply bg-[#f6efe9] rounded-2xl shadow-soft transition-all duration-500 overflow-hidden border border-white/40;
   }
 
   .pill-button {
