@@ -434,16 +434,14 @@ export default function App() {
       />
 
       {/* Mobile Floating Actions */}
-      {!selectedMachineId && (
-        <MobileNavigation 
-          currentFilter={filter}
-          onFilterChange={setFilter}
-          onAdd={() => setIsModalOpen(true)}
-          onLogout={logout}
-          currentView={currentView}
-          onViewChange={setCurrentView}
-        />
-      )}
+      <MobileNavigation 
+        currentFilter={filter}
+        onFilterChange={setFilter}
+        onAdd={() => setIsModalOpen(true)}
+        onLogout={logout}
+        currentView={currentView}
+        onViewChange={(v) => { setCurrentView(v); setSelectedMachineId(null); }}
+      />
     </div>
   );
 }
@@ -473,9 +471,10 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
   onViewChange: (v: 'dashboard' | 'whatsapp') => void
 }) {
   return (
-    <div className="sm:hidden fixed bottom-2 left-1/2 -translate-x-1/2 z-[60] w-max">
+    <div className="sm:hidden fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-[60] w-max">
       <div className="bg-[#f6efe9] p-2 rounded-full shadow-soft flex items-center gap-2 border border-white/60">
         <button
+          type="button"
           onClick={() => onViewChange('dashboard')}
           className={cn(
             "w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all",
@@ -485,6 +484,7 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
           <Home className="w-4 h-4" />
         </button>
         <button
+          type="button"
           onClick={() => onViewChange('whatsapp')}
           className={cn(
             "w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all",
@@ -494,12 +494,14 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
           <BookOpen className="w-4 h-4" />
         </button>
         <button
+          type="button"
           onClick={onAdd}
           className="w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset"
         >
           <PenLine className="w-4 h-4" />
         </button>
         <button
+          type="button"
           onClick={onLogout}
           className="w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset"
         >
