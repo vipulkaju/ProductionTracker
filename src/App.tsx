@@ -16,7 +16,11 @@ import {
   Zap,
   Clock,
   Timer,
-  MessageSquare
+  MessageSquare,
+  Home,
+  BookOpen,
+  PenLine,
+  User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductionItem, ProductionStatus, ProductionRecord } from './types';
@@ -261,10 +265,6 @@ export default function App() {
             <h1 className="text-xl sm:text-6xl font-black font-display tracking-tighter text-slate-800 leading-none flex flex-wrap">
               <span>Production</span><span className="text-[#bde0fe]">Tracker</span>
             </h1>
-            <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-3">
-              <div className="w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full bg-[#ffafcc] animate-pulse shrink-0" />
-              <p className="text-[7px] sm:text-[14px] text-slate-400 font-bold uppercase tracking-[0.15em] sm:tracking-[0.6em] whitespace-normal">Global Registry Interface</p>
-            </div>
           </div>
         </div>
         
@@ -323,7 +323,6 @@ export default function App() {
             ) : currentView === 'whatsapp' ? (
               <WhatsAppReport 
                 key="whatsapp"
-                onBack={() => setCurrentView('dashboard')}
                 user={user}
               />
             ) : (
@@ -348,7 +347,7 @@ export default function App() {
                     
                     <button 
                       onClick={() => setIsModalOpen(true)}
-                      className="pill-button w-full sm:w-auto px-16 py-8 text-rose-900 rounded-[3.5rem] font-black text-xs uppercase tracking-[0.5em] flex items-center justify-center gap-6 group"
+                      className="hidden sm:flex pill-button w-full sm:w-auto px-16 py-8 text-rose-900 rounded-[3.5rem] font-black text-xs uppercase tracking-[0.5em] items-center justify-center gap-6 group"
                     >
                       <Plus className="w-8 h-8 transition-transform group-hover:rotate-180 duration-700" />
                       <span>Deploy New Asset</span>
@@ -464,98 +463,48 @@ function FilterButton({ children, active, onClick }: { children: React.ReactNode
   );
 }
 
-function MobileNavigation({ currentFilter, onFilterChange, onAdd, onLogout, currentView, onViewChange }: { 
-  currentFilter: ProductionStatus | "ALL", 
-  onFilterChange: (f: ProductionStatus | "ALL") => void,
+function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: { 
+  currentFilter: string, 
+  onFilterChange: (f: string) => void,
   onAdd: () => void,
   onLogout: () => void,
   currentView: 'dashboard' | 'whatsapp',
   onViewChange: (v: 'dashboard' | 'whatsapp') => void
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div className="sm:hidden fixed bottom-8 right-8 z-[60] flex flex-col items-end gap-6">
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-[#f4f1ee]/80 backdrop-blur-md z-[59]"
-            />
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, y: 40 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 40 }}
-              className="absolute bottom-24 right-0 w-80 bg-[#fcfaf8] rounded-[3.5rem] shadow-soft overflow-hidden z-[60] border border-white/60 p-6"
-            >
-              <div className="space-y-8">
-                <div className="space-y-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300 px-3">Registry Nodes</p>
-                  <div className="grid grid-cols-1 gap-4">
-                    <button 
-                      onClick={() => { onViewChange('dashboard'); setIsOpen(false); }}
-                      className={cn(
-                        "w-full flex items-center gap-4 p-5 rounded-[2rem] font-bold text-sm transition-all",
-                        currentView === 'dashboard' ? "bg-[#bde0fe] text-blue-900 shadow-soft-sm" : "bg-white text-slate-400"
-                      )}
-                    >
-                      <LayoutDashboard className="w-5 h-5" />
-                      <span>Fleet Control</span>
-                    </button>
-                    <button 
-                      onClick={() => { onViewChange('whatsapp'); setIsOpen(false); }}
-                      className={cn(
-                        "w-full flex items-center gap-4 p-5 rounded-[2rem] font-bold text-sm transition-all",
-                        currentView === 'whatsapp' ? "bg-[#ffafcc] text-rose-900 shadow-soft-sm" : "bg-white text-slate-400"
-                      )}
-                    >
-                      <MessageSquare className="w-5 h-5" />
-                      <span>Comms Hub</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300 px-3">Local Filters</p>
-                  <div className="grid grid-cols-1">
-                    <FilterOption active={currentFilter === "ALL"} onClick={() => { onFilterChange("ALL"); setIsOpen(false); }}>All Operational Assets</FilterOption>
-                  </div>
-                </div>
-                <div className="space-y-4 pt-4 border-t border-slate-100">
-                  <button 
-                    onClick={() => { onLogout(); setIsOpen(false); }}
-                    className="w-full flex items-center gap-4 p-5 pill-button-danger rounded-[2rem] font-bold text-sm"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span>Disconnect Node</span>
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "w-20 h-20 rounded-[2.5rem] flex items-center justify-center transition-all z-[61] relative border",
-          isOpen ? "bg-white border-white/60 shadow-soft" : "bg-[#f6efe9] border-white/60 shadow-soft"
-        )}
-      >
-        <motion.div
-          animate={{ rotate: isOpen ? 45 : 0 }}
-          transition={{ type: "spring", damping: 10 }}
+    <div className="sm:hidden fixed bottom-2 left-1/2 -translate-x-1/2 z-[60] w-max">
+      <div className="bg-[#f6efe9] p-2 rounded-full shadow-soft flex items-center gap-2 border border-white/60">
+        <button
+          onClick={() => onViewChange('dashboard')}
+          className={cn(
+            "w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all",
+            currentView === 'dashboard' ? "shadow-soft-inset text-blue-500" : "shadow-soft text-slate-500 hover:text-slate-800"
+          )}
         >
-          <Plus className={cn("w-10 h-10 transition-colors", isOpen ? "text-slate-400" : "text-[#ffafcc]")} />
-        </motion.div>
-      </motion.button>
+          <Home className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => onViewChange('whatsapp')}
+          className={cn(
+            "w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all",
+            currentView === 'whatsapp' ? "shadow-soft-inset text-blue-500" : "shadow-soft text-slate-500 hover:text-slate-800"
+          )}
+        >
+          <BookOpen className="w-4 h-4" />
+        </button>
+        <button
+          onClick={onAdd}
+          className="w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset"
+        >
+          <PenLine className="w-4 h-4" />
+        </button>
+        <button
+          onClick={onLogout}
+          className="w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset"
+        >
+          <User className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 }

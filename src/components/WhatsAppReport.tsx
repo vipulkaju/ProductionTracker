@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Calendar, 
-  ChevronLeft, 
   MessageSquare, 
   Send, 
   Settings, 
@@ -12,7 +11,8 @@ import {
   Layers,
   Activity,
   User,
-  Clock
+  Clock,
+  MessageCircle
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ProductionItem, ProductionRecord } from '../types';
@@ -22,7 +22,6 @@ import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestor
 import { format, parseISO, startOfDay } from 'date-fns';
 
 interface WhatsAppReportProps {
-  onBack: () => void;
   user: any;
   key?: string;
 }
@@ -33,7 +32,7 @@ interface MachineDailyReport {
   nightShift?: ProductionRecord;
 }
 
-export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
+export function WhatsAppReport({ user }: WhatsAppReportProps) {
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [loading, setLoading] = useState(false);
   const [machines, setMachines] = useState<ProductionItem[]>([]);
@@ -137,35 +136,29 @@ export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
       className="space-y-8 pb-32"
     >
       {/* Header Panel */}
-      <div className="bg-[#fcfaf8] rounded-[3.5rem] p-10 flex flex-col sm:flex-row items-center justify-between gap-8 border border-white/60 shadow-soft overflow-hidden relative">
+      <div className="bg-[#fcfaf8] rounded-[3.5rem] p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 border border-white/60 shadow-soft overflow-hidden relative">
         <div className="absolute top-0 right-0 p-16 bg-[#ffafcc]/5 blur-[100px] rounded-full translate-x-12 -translate-y-12" />
-        
-        <div className="flex items-center gap-6 relative z-10 w-full sm:w-auto">
-          <button 
-            onClick={onBack}
-            className="p-5 sm:p-6 pill-button rounded-[2rem] transition-all text-slate-800 active:scale-90"
-          >
-            <ChevronLeft className="w-8 h-8" />
-          </button>
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-800 font-display tracking-tight leading-none uppercase italic">Report Node</h2>
-            <div className="flex items-center gap-4 mt-4">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_2px_rgba(52,211,153,0.3)]" />
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em]">Transmission Ready</p>
-            </div>
-          </div>
-        </div>
 
-        <div className="relative group w-full sm:w-auto">
-          <div className="absolute left-5 top-1/2 -translate-y-1/2 p-3 bg-slate-800 text-white rounded-2xl shadow-soft z-10">
-            <Calendar className="w-5 h-5" />
+        <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="relative group flex-1 sm:flex-none min-w-0 w-full sm:w-auto">
+            <div className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-10 sm:w-[3.25rem] h-10 sm:h-[3.25rem] shadow-soft-inset rounded-full flex items-center justify-center text-slate-500 z-10 pointer-events-none border border-transparent">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+            <input 
+              type="date" 
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="w-full sm:w-auto pl-14 sm:pl-[5rem] pr-4 sm:pr-8 py-4 sm:py-5 pill-button rounded-[2.5rem] cursor-pointer text-slate-800 font-black h-14 sm:h-[4.5rem] outline-none text-xs sm:text-sm appearance-none min-w-0"
+            />
           </div>
-          <input 
-            type="date" 
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full sm:w-auto pl-20 pr-10 py-6 form-input-premium bg-white cursor-pointer"
-          />
+          
+          <button 
+            onClick={handleShare}
+            disabled={loading || reports.length === 0}
+            className="w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] shrink-0 pill-button rounded-full flex items-center justify-center disabled:opacity-50 disabled:grayscale transition-all text-emerald-500"
+          >
+            <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+          </button>
         </div>
       </div>
 
@@ -183,14 +176,14 @@ export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
               className="soft-card p-10 space-y-8 border border-white transition-all duration-500 group relative"
             >
               <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
-                <div className="w-14 h-14 bg-slate-800 text-white rounded-[1.8rem] flex items-center justify-center shadow-soft-sm rotate-6 group-hover:rotate-0 transition-transform duration-500">
-                  <Box className="w-7 h-7" />
+                <div className="w-14 h-14 pill-button rounded-full flex items-center justify-center text-slate-400 transition-transform duration-500">
+                  <Box className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-800 uppercase font-display leading-none tracking-tight">{report.machine.name}</h3>
+                  <h3 className="text-xl font-black text-slate-800 uppercase font-display leading-none tracking-tight">{report.machine.name.toUpperCase().startsWith('MACHINE') ? report.machine.name : `MACHINE ${report.machine.name}`}</h3>
                   <div className="flex items-center gap-3 mt-3">
                     <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] bg-[#bde0fe]/30 px-4 py-1.5 rounded-full">
-                      {report.machine.category}
+                      {report.machine.machineArea ? `AREA ${report.machine.machineArea}` : report.machine.category}
                     </span>
                   </div>
                 </div>
@@ -213,19 +206,6 @@ export function WhatsAppReport({ onBack, user }: WhatsAppReportProps) {
             </motion.div>
           ))
         )}
-      </div>
-
-      <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 px-8 w-full max-w-2xl">
-        <button 
-          onClick={handleShare}
-          disabled={loading || reports.length === 0}
-          className="group relative w-full py-6 sm:py-8 pill-button-success rounded-[3.5rem] font-black text-[12px] sm:text-sm uppercase tracking-[0.5em] flex items-center justify-center gap-6 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden border border-white/60 active:scale-[0.98]"
-        >
-          <div className="relative z-10 flex items-center gap-4">
-            <Send className="w-6 h-6 sm:w-8 sm:h-8 group-hover:translate-x-1 transition-transform" />
-            <span>Broadcast Transmission</span>
-          </div>
-        </button>
       </div>
 
       {!loading && reports.length === 0 && (

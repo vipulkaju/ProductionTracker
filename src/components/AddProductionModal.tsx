@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Plus, User, Hash, Clock, FileText, Activity, Calendar } from 'lucide-react';
+import { X, Plus, User, Hash, Clock, FileText, Activity, Calendar, Moon, Sun, Save } from 'lucide-react';
 import { ProductionRecord } from '../types';
 import { cn } from '../lib/utils';
 
@@ -142,19 +142,19 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                       />
                     </FormGroup>
 
-                    <FormGroup label="Current Deployment (Shift)" icon={Clock} isDark>
+                    <FormGroup label="Current Deployment (Shift)" isDark>
                       <div className="flex sm:flex-col gap-3 pt-1">
                         <ShiftToggle 
                           active={currentShift === 'DAY'} 
                           onClick={() => setCurrentShift('DAY')}
-                          icon={Clock}
+                          icon={Sun}
                           label="Day"
                           color="amber"
                         />
                         <ShiftToggle 
                           active={currentShift === 'NIGHT'} 
                           onClick={() => setCurrentShift('NIGHT')}
-                          icon={Clock}
+                          icon={Moon}
                           label="Night"
                           color="indigo"
                         />
@@ -209,13 +209,13 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                         />
                       </FormGroup>
 
-                      <FormGroup label="Head" icon={FileText}>
+                      <FormGroup label="design Name" icon={FileText}>
                         <input 
                           name="designName" 
                           required 
                           value={shiftsData[currentShift].designName || ''} 
                           onChange={handleChange} 
-                          placeholder="HEAD SERIAL ID"
+                          placeholder="ENTER DESIGN NAME"
                           className="form-input-premium" 
                         />
                       </FormGroup>
@@ -244,7 +244,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                               className="form-input-premium" 
                             />
                           </FormGroup>
-                          <FormGroup label="Frame Iterations" icon={Hash}>
+                          <FormGroup label="Total Frame" icon={Hash}>
                             <input 
                               name="frame" 
                               type="number" 
@@ -257,7 +257,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                         </div>
                         
                         <div className="space-y-6">
-                          <FormGroup label="Calculated Meters" icon={Plus}>
+                          <FormGroup label="Total Meters" icon={Plus}>
                             <input 
                               name="totalMeters" 
                               type="number" 
@@ -268,7 +268,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                               className="form-input-premium" 
                             />
                           </FormGroup>
-                          <FormGroup label="Total Stitch Density" icon={Activity}>
+                          <FormGroup label="Total Stitch" icon={Activity}>
                             <input 
                               name="totalStitches" 
                               type="number" 
@@ -290,8 +290,8 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                     className="group relative w-full py-5 sm:py-7 pill-button-primary rounded-[2.5rem] sm:rounded-[3rem] text-[12px] sm:text-base font-black active:scale-[0.98] overflow-hidden border border-white/60"
                   >
                     <div className="relative z-10 flex items-center justify-center gap-4 uppercase tracking-[0.4em]">
-                      <span>Finalize Registry Commit</span>
-                      <Plus className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-180 transition-transform duration-500" />
+                      <span>Save entry</span>
+                      <Save className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform duration-500" />
                     </div>
                   </button>
                   <p className="mt-6 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest sm:hidden">
@@ -327,14 +327,16 @@ function ShiftToggle({ active, onClick, icon: Icon, label, color }: { active: bo
   );
 }
 
-function FormGroup({ label, children, icon: Icon, isDark = false }: { label: string, children: React.ReactNode, icon: any, isDark?: boolean }) {
+function FormGroup({ label, children, icon: Icon, isDark = false }: { label: string, children: React.ReactNode, icon?: any, isDark?: boolean }) {
   return (
     <div className="space-y-2 flex flex-col">
       <label className={cn("text-[10px] font-black uppercase tracking-widest ml-2", isDark ? "text-slate-500" : "text-slate-400")}>{label}</label>
       <div className="relative">
-        <div className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4", isDark ? "text-slate-500" : "text-slate-300")}>
-          <Icon className="w-full h-full" />
-        </div>
+        {Icon && (
+          <div className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none", isDark ? "text-slate-500" : "text-slate-300")}>
+            <Icon className="w-full h-full" />
+          </div>
+        )}
         {children}
       </div>
     </div>

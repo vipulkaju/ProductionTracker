@@ -164,7 +164,7 @@ export function AddMachineModal({ isOpen, onClose, onAdd }: AddMachineModalProps
                     type="submit"
                     className="w-full py-6 sm:py-8 pill-button-primary rounded-[3rem] text-sm font-black uppercase tracking-[0.4em] flex items-center justify-center gap-4 shadow-soft-sm hover:shadow-soft"
                   >
-                    <Plus className="w-6 h-6" />
+                    <Plus className="w-6 h-6 hidden sm:block" />
                     Complete Registration
                   </button>
                 </div>
