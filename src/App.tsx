@@ -342,19 +342,19 @@ export default function App() {
                 className="space-y-12"
               >
                 {/* Hero Section */}
-                <section className="space-y-10">
-                  <div className="flex flex-col sm:flex-row sm:items-end justify-end gap-12">
+                <section className="sm:space-y-10">
+                  <div className="hidden sm:flex flex-col sm:flex-row sm:items-end justify-end gap-12">
                     
                     <button 
                       onClick={() => setIsModalOpen(true)}
-                      className="hidden sm:flex pill-button w-full sm:w-auto px-16 py-8 text-rose-900 rounded-[3.5rem] font-black text-xs uppercase tracking-[0.5em] items-center justify-center gap-6 group"
+                      className="pill-button w-full sm:w-auto px-16 py-8 text-rose-900 rounded-[3.5rem] font-black text-xs uppercase tracking-[0.5em] flex items-center justify-center gap-6 group"
                     >
                       <Plus className="w-8 h-8 transition-transform group-hover:rotate-180 duration-700" />
                       <span>Deploy New Asset</span>
                     </button>
                   </div>
 
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+                  <div className="hidden sm:block h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
                   {isInitialLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
