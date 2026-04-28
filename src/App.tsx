@@ -258,12 +258,12 @@ export default function App() {
             <Box className="w-6 h-6 sm:w-14 sm:h-14 text-[#ffafcc]" />
           </motion.div>
           <div className="flex flex-col min-w-0">
-            <h1 className="text-2xl sm:text-6xl font-black font-display tracking-tighter text-slate-800 leading-none truncate">
-              Production<span className="text-[#bde0fe]">Tracker</span>
+            <h1 className="text-xl sm:text-6xl font-black font-display tracking-tighter text-slate-800 leading-none flex flex-wrap">
+              <span>Production</span><span className="text-[#bde0fe]">Tracker</span>
             </h1>
             <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-3">
-              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ffafcc] animate-pulse shrink-0" />
-              <p className="text-[8px] sm:text-[14px] text-slate-400 font-bold uppercase tracking-[0.2em] sm:tracking-[0.6em] truncate">Global Registry Interface</p>
+              <div className="w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full bg-[#ffafcc] animate-pulse shrink-0" />
+              <p className="text-[7px] sm:text-[14px] text-slate-400 font-bold uppercase tracking-[0.15em] sm:tracking-[0.6em] whitespace-normal">Global Registry Interface</p>
             </div>
           </div>
         </div>
