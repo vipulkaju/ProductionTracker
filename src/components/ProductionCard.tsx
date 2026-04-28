@@ -108,74 +108,71 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
           )}
         </AnimatePresence>
 
-        <div className="p-3 sm:p-6 flex flex-col h-full relative">
+        <div className="p-3 sm:p-5 flex flex-col h-full relative">
           
-          <div className="flex flex-col gap-1 sm:gap-2 mb-4">
-            <div className="flex justify-between items-start gap-2">
+          <div className="flex justify-between items-start mb-3 sm:mb-4 pr-1">
+            <div className="flex flex-col gap-1 sm:gap-1.5 flex-1 min-w-0">
               <div className="flex items-center gap-2 max-w-full min-w-0">
                 <div className={cn(
-                  "w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0 shadow-inner",
+                  "w-3 h-3 sm:w-4 sm:h-4 rounded-full shrink-0 shadow-inner",
                   hasTodayEntry() ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"
                 )} />
-                <span className="font-display font-black text-slate-800 text-lg sm:text-3xl tracking-tighter leading-none break-all sm:break-normal">
+                <span className="font-display font-black text-slate-800 text-xl sm:text-3xl tracking-tighter leading-none truncate">
                   {item.id}
                 </span>
-                
-                {item.machineHead && (
-                  <span className="ml-1 shrink-0 font-mono text-[10px] sm:text-sm font-black text-blue-600 bg-white shadow-soft-sm px-2 py-0.5 rounded-md uppercase tracking-widest border border-blue-50">
-                    H{item.machineHead}
-                  </span>
-                )}
+              </div>
+              
+              <div className="flex items-center gap-1.5 ml-5">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ffafcc] shrink-0" />
+                <span className="text-[9px] sm:text-[11px] font-black text-slate-400 uppercase tracking-widest truncate">{item.name}</span>
               </div>
             </div>
-            
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#ffafcc] shrink-0" />
-              <span className="text-[9px] sm:text-[11px] font-black text-slate-400 uppercase tracking-widest break-words">{item.name}</span>
-            </div>
+
+            {item.machineHead && (
+              <div className="flex flex-col items-end shrink-0 ml-2 pt-1">
+                <span className="text-[7px] sm:text-[9px] uppercase font-black tracking-widest text-blue-400 mb-0.5">Head</span>
+                <div className="bg-white shadow-soft-sm px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-blue-50">
+                  <span className="font-mono font-black text-lg sm:text-2xl text-blue-600 leading-none">
+                    {item.machineHead}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4">
-            <div className="bg-white/60 p-2.5 sm:p-4 rounded-[1rem] sm:rounded-[1.5rem] border border-white group-hover:bg-white transition-colors duration-500 min-w-0">
-              <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1.5 sm:mb-2 break-words whitespace-normal">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 shrink-0">
+            <div className="bg-white/70 p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-20 sm:h-24">
+               <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate">
                 {item.machineHead ? "Head" : "Qty"}
               </p>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-1 sm:w-1.5 h-4 sm:h-6 rounded-full bg-[#bde0fe] shrink-0" />
-                <span className="text-base sm:text-2xl font-black text-slate-700 font-display break-words leading-none">
-                  {item.machineHead || item.quantity}
-                </span>
-              </div>
+               <span className="text-2xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none">
+                 {item.machineHead || item.quantity}
+               </span>
             </div>
             
-            <div className="bg-white/60 p-2.5 sm:p-4 rounded-[1rem] sm:rounded-[1.5rem] border border-white group-hover:bg-white transition-colors duration-500 min-w-0">
-              <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1.5 sm:mb-2 break-words whitespace-normal">
+            <div className="bg-white/70 p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-20 sm:h-24">
+              <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate">
                 {item.machineArea ? "Area" : "Lead"}
               </p>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-1 sm:w-1.5 h-4 sm:h-6 rounded-full bg-[#ffafcc] shrink-0" />
-                <span className="text-base sm:text-2xl font-black text-slate-700 font-display break-words leading-none">
-                  {item.machineArea || (item.assignedTo && item.assignedTo.split(' ')[0])}
-                </span>
-              </div>
+               <span className="text-2xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none">
+                 {item.machineArea || (item.assignedTo && item.assignedTo.split(' ')[0])}
+               </span>
             </div>
           </div>
 
-          <div className="mt-auto pt-2">
-            <div className="bg-white p-2.5 sm:p-4 flex flex-col gap-2 rounded-[1rem] sm:rounded-[1.5rem] border border-slate-100/60 shadow-sm">
-              <div className="flex justify-end sm:hidden mb-1">
-                 <StatusBadge status={item.status} className="!px-2 !py-0.5 !text-[7px]" />
+          <div className="mt-auto">
+            <div className="bg-white px-3 py-2 sm:px-4 sm:py-3 flex flex-col justify-center rounded-2xl border border-slate-100/60 shadow-sm relative min-h-[48px]">
+              <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2">
+                <StatusBadge status={item.status} className="!px-2.5 !py-1 !text-[7px] sm:!text-[9px]" />
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] sm:text-xs font-black text-slate-400 uppercase tracking-widest break-words whitespace-normal">
+              <div className="flex items-baseline gap-1.5 sm:gap-2">
+                <span className="text-[9px] sm:text-[11px] font-black text-slate-400 uppercase tracking-widest truncate">
                   Frame
                 </span>
-                <span className="text-sm sm:text-base font-black font-mono text-slate-700 break-words whitespace-normal">
-                  {item.frameMeters || '0'}m
+                <span className="text-sm sm:text-lg font-black font-mono text-slate-700 truncate leading-none">
+                  {item.frameMeters || '0'}
+                  <span className="text-[9px] sm:text-xs text-slate-400 ml-0.5">m</span>
                 </span>
-              </div>
-              <div className="hidden sm:flex justify-end mt-1">
-                 <StatusBadge status={item.status} className="!px-3 !py-1 !text-[9px]" />
               </div>
             </div>
           </div>
