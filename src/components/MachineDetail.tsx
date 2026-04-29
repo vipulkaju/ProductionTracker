@@ -29,7 +29,7 @@ import { handleFirestoreError, OperationType } from '../lib/firestoreErrorHandle
 import { EditProductionModal } from './EditProductionModal';
 import { ConfirmationModal } from './ConfirmationModal';
 import { AddProductionModal } from './AddProductionModal';
-import { eachDayOfInterval, startOfMonth, endOfMonth, format } from 'date-fns';
+import { eachDayOfInterval, startOfMonth, endOfMonth, format, isSameWeek } from 'date-fns';
 
 interface MachineDetailProps {
   item: ProductionItem;
@@ -46,6 +46,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
   const [editLog, setEditLog] = useState<ProductionRecord | null>(null);
   const [logToDelete, setLogToDelete] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [showFullMonthMobile, setShowFullMonthMobile] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -130,6 +131,8 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
     });
   }, [logs]);
 
+  const currentWeekDay = new Date();
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
@@ -138,7 +141,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
       className="space-y-10 pb-12"
     >
       {/* Deep Cinematic Header Project Node */}
-      <div className="bento-card p-6 sm:p-10 relative overflow-hidden group w-full flex flex-col justify-center min-h-[300px]">
+      <div className="bento-card p-6 sm:p-10 relative overflow-hidden group w-full flex flex-col justify-center">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full group-hover:bg-indigo-600/10 transition-colors duration-1000 translate-x-1/3 -translate-y-1/3" />
         
         {/* Middle Main Row */}
@@ -193,28 +196,51 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
           </div>
         </div>
 
-        <div className="bento-card p-10">
-          <div className="grid grid-cols-7 sm:grid-cols-10 md:grid-cols-15 lg:grid-cols-31 gap-4">
-            {monthlyUptimeData.map((day) => (
+        <div 
+          className="bento-card p-6 sm:p-10 cursor-pointer sm:cursor-default transition-all active:scale-[0.98] sm:active:scale-100"
+          onClick={() => setShowFullMonthMobile(!showFullMonthMobile)}
+        >
+          {/* Mobile indicator that it can be expanded */}
+          {!showFullMonthMobile && (
+             <div className="sm:hidden text-center mb-4 flex items-center justify-center gap-2 text-slate-400">
+               <span className="text-[10px] font-black uppercase tracking-widest">Showing current week</span>
+               <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-100 px-2 py-1 rounded-md">Tap to expand</span>
+             </div>
+          )}
+          {showFullMonthMobile && (
+             <div className="sm:hidden text-center mb-4 flex items-center justify-center gap-2 text-slate-400">
+               <span className="text-[10px] font-black uppercase tracking-widest">Showing full month</span>
+               <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-100 px-2 py-1 rounded-md">Tap to collapse</span>
+             </div>
+          )}
+          <div className="grid grid-cols-7 sm:grid-cols-10 md:grid-cols-15 lg:grid-cols-31 gap-2 sm:gap-4">
+            {monthlyUptimeData.map((day) => {
+              const dateObj = new Date(day.dateStr);
+              const isCurrentWeek = isSameWeek(dateObj, currentWeekDay, { weekStartsOn: 1 }); // Assuming week starts on Monday, or use default (Sunday = 0). Let's use 1 if your area uses Monday. I'll drop the option to default.
+               
+              const isHiddenOnMobile = !showFullMonthMobile && !isSameWeek(dateObj, currentWeekDay, { weekStartsOn: 0 }); // Just default isSameWeek
+
+              return (
               <motion.div 
                 key={day.dateStr}
                 whileHover={{ y: -6, scale: 1.15 }}
                 className={cn(
-                  "aspect-square rounded-2xl flex items-center justify-center transition-all shadow-sm relative group",
+                  "aspect-square rounded-xl sm:rounded-2xl items-center justify-center transition-all shadow-sm relative group",
                   day.status === 'NONE' ? "bg-slate-50 text-slate-300 border-2 border-slate-100" :
                   day.status === 'PARTIAL' ? "bg-amber-50 text-amber-600 border-2 border-amber-200 shadow-amber-100" :
-                  "bg-emerald-50 text-emerald-600 border-2 border-emerald-200 shadow-emerald-100"
+                  "bg-emerald-50 text-emerald-600 border-2 border-emerald-200 shadow-emerald-100",
+                  isHiddenOnMobile ? "hidden sm:flex" : "flex"
                 )}
               >
                 <span className="text-[11px] font-black">{day.dayNum}</span>
                 {day.status !== 'NONE' && (
                   <div className={cn(
-                    "absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white",
+                    "absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full border border-white sm:border-2",
                     day.status === 'PARTIAL' ? "bg-amber-500" : "bg-emerald-500"
                   )} />
                 )}
               </motion.div>
-            ))}
+            )})}
           </div>
         </div>
       </section>
