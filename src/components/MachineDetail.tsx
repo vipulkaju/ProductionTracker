@@ -476,24 +476,24 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
            </div>
         </div>
 
-        <div className="flex flex-col gap-2 sm:gap-3 relative z-10">
+        <div className="flex flex-col gap-2 sm:gap-3 relative z-10 bg-[#f1f8d4] p-2 sm:p-3 rounded-xl sm:rounded-2xl">
           <div className="bg-white/60 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-1 border border-white/40 shadow-soft-sm">
              <span className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Design Name</span>
              <span className="text-xs sm:text-sm font-black w-full break-words text-slate-800 leading-tight">{log.designName}</span>
           </div>
           
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className="bg-white/60 p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-white/40 items-center justify-center text-center shadow-soft-sm min-h-[4rem]">
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Design Stitches</span>
+            <div className="bg-[#fffdbb] p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-[#fffdbb] items-center justify-center text-center shadow-soft-sm min-h-[4rem]">
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Design Stitches</span>
               <span className="text-xs sm:text-sm font-black font-mono text-slate-800">{log.designStitch.toLocaleString()}</span>
             </div>
-            <div className="bg-white/60 p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-white/40 items-center justify-center text-center shadow-soft-sm min-h-[4rem]">
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Frame</span>
+            <div className="bg-[#ffd9e8] p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-[#ffd9e8] items-center justify-center text-center shadow-soft-sm min-h-[4rem]">
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Total Frame</span>
               <span className="text-xs sm:text-sm font-black font-mono text-slate-800">{log.frame}</span>
             </div>
-            <div className="bg-white/60 p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-white/40 items-center justify-center text-center shadow-soft-sm col-span-2">
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Meters</span>
-              <span className="text-sm sm:text-base font-black font-mono text-emerald-600">{log.totalMeters}m</span>
+            <div className="bg-[#dce7f9] p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-[#dce7f9] items-center justify-center text-center shadow-soft-sm col-span-2">
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Total Meters</span>
+              <span className="text-sm sm:text-base font-black font-mono text-slate-800">{log.totalMeters}m</span>
             </div>
           </div>
 
