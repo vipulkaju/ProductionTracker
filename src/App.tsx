@@ -471,7 +471,7 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
   onViewChange: (v: 'dashboard' | 'whatsapp') => void
 }) {
   return (
-    <div className="sm:hidden fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-[60] w-max">
+    <div className="sm:hidden fixed bottom-2 sm:bottom-8 left-1/2 -translate-x-1/2 z-[60] w-max">
       <div className="bg-[#f6efe9] p-2 rounded-full shadow-soft flex items-center gap-2 border border-white/60">
         <button
           type="button"

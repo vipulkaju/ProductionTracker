@@ -47,6 +47,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
   const [logToDelete, setLogToDelete] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [showFullMonthMobile, setShowFullMonthMobile] = useState(false);
+  const [selectedDateFilter, setSelectedDateFilter] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -98,14 +99,18 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
 
   const logsByDate = useMemo(() => {
     const groups: Record<string, { DAY?: ProductionRecord; NIGHT?: ProductionRecord }> = {};
-    logs.forEach(log => {
+    const filteredLogs = selectedDateFilter 
+      ? logs.filter(log => log.date === selectedDateFilter)
+      : logs;
+      
+    filteredLogs.forEach(log => {
       if (!groups[log.date]) {
         groups[log.date] = {};
       }
       groups[log.date][log.shift] = log;
     });
     return Object.entries(groups).sort((a, b) => b[0].localeCompare(a[0]));
-  }, [logs]);
+  }, [logs, selectedDateFilter]);
 
 
   const monthlyUptimeData = useMemo(() => {
@@ -224,12 +229,17 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
               <motion.div 
                 key={day.dateStr}
                 whileHover={{ y: -6, scale: 1.15 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDateFilter(prev => prev === day.dateStr ? null : day.dateStr);
+                }}
                 className={cn(
-                  "aspect-square rounded-xl sm:rounded-2xl items-center justify-center transition-all shadow-sm relative group",
+                  "aspect-square rounded-xl sm:rounded-2xl items-center justify-center transition-all shadow-sm relative group cursor-pointer",
                   day.status === 'NONE' ? "bg-slate-50 text-slate-300 border-2 border-slate-100" :
                   day.status === 'PARTIAL' ? "bg-amber-50 text-amber-600 border-2 border-amber-200 shadow-amber-100" :
                   "bg-emerald-50 text-emerald-600 border-2 border-emerald-200 shadow-emerald-100",
-                  isHiddenOnMobile ? "hidden sm:flex" : "flex"
+                  isHiddenOnMobile ? "hidden sm:flex" : "flex",
+                  selectedDateFilter === day.dateStr ? "ring-4 ring-indigo-500 ring-offset-2 scale-110 z-10" : ""
                 )}
               >
                 <span className="text-[11px] font-black">{day.dayNum}</span>
@@ -247,14 +257,32 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
 
       {/* Production History Section */}
       <section className="space-y-12">
-        <div className="flex items-center gap-6 px-4">
-          <div className="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-100">
-            <FileText className="w-6 h-6" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 px-4">
+          <div className="flex items-center gap-4 sm:gap-6 w-full">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 text-white rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-2xl shadow-indigo-100">
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div className="flex-1 flex flex-col pt-1">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h3 className="text-base font-black text-slate-900 uppercase tracking-tighter italic whitespace-nowrap">Registry Archives</h3>
+                {selectedDateFilter && (
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full shrink-0">
+                    Filtered: {formatDate(selectedDateFilter)}
+                  </span>
+                )}
+              </div>
+              <div className="h-px bg-slate-100 mt-3 w-full hidden sm:block" />
+            </div>
+            {selectedDateFilter && (
+              <button
+                onClick={() => setSelectedDateFilter(null)}
+                className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-800 transition-colors underline underline-offset-4 shrink-0"
+              >
+                Clear
+              </button>
+            )}
           </div>
-          <div className="flex-1 flex flex-col">
-            <h3 className="text-base font-black text-slate-900 uppercase tracking-tighter translate-y-1 italic">Registry Archives</h3>
-            <div className="h-px bg-slate-100 mt-3 w-full" />
-          </div>
+          <div className="h-px bg-slate-100 w-full sm:hidden" />
         </div>
 
         {loading ? (
