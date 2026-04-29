@@ -15,7 +15,9 @@ import {
   Layers,
   Ruler,
   Trash2,
-  Pencil
+  Pencil,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { formatDate, cn } from '../lib/utils';
 import { StatusBadge } from './StatusBadge';
@@ -136,22 +138,20 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
       className="space-y-10 pb-12"
     >
       {/* Deep Cinematic Header Project Node */}
-      <div className="bento-card p-8 sm:p-14 relative overflow-hidden group flex flex-col lg:flex-row items-center gap-8 sm:gap-12">
+      <div className="bento-card p-6 sm:p-10 relative overflow-hidden group w-full flex flex-col justify-center min-h-[300px]">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full group-hover:bg-indigo-600/10 transition-colors duration-1000 translate-x-1/3 -translate-y-1/3" />
         
-        <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-10 relative z-10 w-full sm:w-auto">
-          <div className="flex flex-col text-center sm:text-left">
-            <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-6">
-              <h2 className="text-5xl sm:text-8xl font-black text-slate-800 font-display tracking-tighter leading-tight uppercase italic drop-shadow-sm pr-2">
-                {item.id}
-              </h2>
-              {item.machineHead && (
-                <span className="text-4xl sm:text-7xl font-black text-indigo-500 font-display uppercase italic tracking-tighter self-center sm:self-end sm:mb-1 drop-shadow-sm">
-                  HEAD {item.machineHead}
-                </span>
-              )}
-            </div>
-          </div>
+        {/* Middle Main Row */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-14 relative z-10 w-full py-2">
+          <h2 className="text-6xl sm:text-8xl font-black text-slate-800 font-display tracking-tighter leading-tight uppercase italic drop-shadow-sm shrink-0">
+            {item.id}
+          </h2>
+
+          {item.machineHead && (
+            <span className="text-5xl sm:text-7xl font-black text-indigo-500 font-display uppercase italic tracking-tighter drop-shadow-sm leading-none shrink-0">
+              HEAD {item.machineHead}
+            </span>
+          )}
         </div>
       </div>
 
@@ -168,10 +168,28 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
               <p className="text-[11px] font-black text-indigo-500 uppercase tracking-[0.3em] mt-1.5">{format(new Date(), 'MMMM yyyy')}</p>
             </div>
           </div>
-          <div className="flex items-center gap-6 bg-white p-4 rounded-3xl border border-slate-100 px-8 shadow-sm">
-            <LegendItem color="bg-rose-500" label="Zero" />
-            <LegendItem color="bg-amber-500" label="Partial" />
-            <LegendItem color="bg-emerald-500" label="Saturated" />
+          <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+            <div className="flex items-center gap-4 sm:gap-6 bg-white p-4 rounded-3xl border border-slate-100 px-6 sm:px-8 shadow-sm">
+              <LegendItem color="bg-rose-500" label="Zero" />
+              <LegendItem color="bg-amber-500" label="Partial" />
+              <LegendItem color="bg-emerald-500" label="Saturated" />
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button 
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex flex-1 items-center gap-2 px-6 py-4 bg-indigo-600 text-white rounded-3xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-200 transition-transform active:scale-95 hover:bg-indigo-700 justify-center"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Record</span>
+              </button>
+              <button
+                onClick={() => onDeleteMachine(item.id)}
+                className="flex items-center justify-center p-4 bg-rose-50 text-rose-600 rounded-3xl transition-transform active:scale-95 hover:bg-rose-100 shrink-0"
+                title="Delete Machine"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -232,11 +250,11 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
                   <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-slate-100 to-transparent" />
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-10">
                   <ShiftSideCard 
                     shift="DAY" 
                     log={shifts.DAY} 
-                    title="SOLAR DEPLOYMENT"
+                    title="DAY SHIFT"
                     accentColor="amber"
                     onDelete={setLogToDelete}
                     onEdit={setEditLog}
@@ -245,7 +263,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
                   <ShiftSideCard 
                     shift="NIGHT" 
                     log={shifts.NIGHT} 
-                    title="LUNAR DEPLOYMENT"
+                    title="NIGHT SHIFT"
                     accentColor="slate"
                     onDelete={setLogToDelete}
                     onEdit={setEditLog}
@@ -291,77 +309,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
         onAdd={(record) => onAddProduction(item.id, record)}
       />
 
-      {/* Mobile FAB for Detail View Actions */}
-      <div className="fixed bottom-24 right-6 z-[60]">
-        <DetailMobileActions 
-          onAdd={() => setIsAddModalOpen(true)}
-          onDelete={() => onDeleteMachine(item.id)}
-        />
-      </div>
     </motion.div>
-  );
-}
-
-function DetailMobileActions({ onAdd, onDelete }: { onAdd: () => void, onDelete: () => void }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="relative">
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[59]"
-            />
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 20 }}
-              className="absolute bottom-20 right-0 w-64 soft-card border border-white/40 p-5 space-y-4 z-[60]"
-            >
-              <button 
-                onClick={() => { onAdd(); setIsOpen(false); }}
-                className="w-full flex items-center gap-4 p-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-100 shadow-bold"
-              >
-                <div className="p-2 bg-white/20 rounded-xl">
-                  <Plus className="w-4 h-4" />
-                </div>
-                <span>Add Record</span>
-              </button>
-              <button 
-                onClick={() => { onDelete(); setIsOpen(false); }}
-                className="w-full flex items-center gap-4 p-4 bg-rose-50 text-rose-600 rounded-2xl font-black text-[10px] uppercase tracking-widest"
-              >
-                <div className="p-2 bg-rose-100 rounded-xl">
-                  <Trash2 className="w-4 h-4" />
-                </div>
-                <span>Delete Machine</span>
-              </button>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl sm:rounded-[2rem] shadow-2xl shadow-indigo-200 flex items-center justify-center transition-all z-[61] relative border-4 border-white",
-          isOpen ? "bg-slate-900 text-white scale-90" : "bg-indigo-600 text-white"
-        )}
-      >
-        <motion.div
-          animate={{ rotate: isOpen ? 45 : 0 }}
-        >
-          <Plus className="w-6 h-6 sm:w-8 sm:h-8" />
-        </motion.div>
-      </motion.button>
-    </div>
   );
 }
 
@@ -446,92 +394,61 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
         )}
       </AnimatePresence>
 
-      {/* Header Accent */}
+      {/* Content Accent */}
       <div className={cn(
-        "px-10 py-10 flex items-center justify-between relative overflow-hidden",
-        isWinner ? "bg-[#bdfedb]/50 text-emerald-900" : 
-        isLoser ? "bg-[#fedbdc]/50 text-rose-900" :
-        isDay ? "bg-[#fbefcc]/60 text-amber-900" : "bg-[#bde0fe]/50 text-blue-900"
+        "px-3 py-4 sm:px-6 sm:py-6 flex flex-col justify-between relative overflow-hidden h-full gap-3 sm:gap-6",
+        isWinner ? "bg-[#bdfedb]/30" : 
+        isLoser ? "bg-[#fedbdc]/30" :
+        isDay ? "bg-[#fbefcc]/40" : "bg-slate-100/50"
       )}>
         {isWinner && (
-          <div className="absolute top-0 right-0 p-1 bg-white text-emerald-600 rounded-bl-[2.5rem] font-black text-[10px] uppercase tracking-[0.4em] px-8 py-4 shadow-sm z-10 border-l border-b border-white">
-            CHAMPION SHIFT
+          <div className="absolute top-0 right-0 p-1 bg-white text-emerald-600 rounded-bl-xl font-black text-[8px] sm:text-[10px] uppercase tracking-[0.2em] px-3 py-1 shadow-sm z-10 border-l border-b border-white">
+            WINNER
           </div>
         )}
         
-        <div className="flex items-center gap-6 relative z-10">
-          <div className={cn(
-            "w-20 h-20 rounded-[2.5rem] flex items-center justify-center shadow-soft-sm bg-white",
-            isWinner ? "text-emerald-500" :
-            isLoser ? "text-rose-400" :
-            isDay ? "text-amber-500" : "text-blue-500"
-          )}>
-            <Clock className="w-10 h-10" />
-          </div>
-          <div>
-            <h4 className="text-[11px] font-black uppercase tracking-[0.6em] opacity-40 mb-2">{title}</h4>
-            <div className="flex items-center gap-4">
-              <User className="w-5 h-5 opacity-30" />
-              <span className="text-2xl font-black uppercase font-display tracking-tighter">{log.operatorName}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats Bento Grid */}
-      <div className="p-10 grid grid-cols-2 gap-8">
-        <div className="bg-[#bde0fe]/10 p-8 rounded-[3rem] border border-white/60 shadow-soft-sm group-hover:bg-white transition-colors duration-500">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-3 h-6 rounded-full bg-blue-200" />
-            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Head Unit</p>
-          </div>
-          <p className="text-xl font-black text-slate-800 uppercase truncate leading-tight mb-6 tracking-tight">{log.designName}</p>
-          <div className="flex items-center gap-4 text-blue-600 bg-white px-6 py-3 rounded-[1.5rem] w-fit shadow-soft-sm">
-            <Hash className="w-5 h-5 opacity-50" />
-            <span className="text-base font-black font-mono">{log.designStitch.toLocaleString()}</span>
-          </div>
+        <div className="flex flex-col relative z-10 w-full min-w-0 pt-2 sm:pt-0">
+           <div className="flex items-center gap-3 w-full">
+             <div className={cn(
+                "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 shadow-soft-sm text-white",
+                isDay ? "bg-amber-500 shadow-amber-200" : "bg-slate-800 shadow-slate-300"
+             )}>
+                {isDay ? <Sun className="w-5 h-5 sm:w-6 sm:h-6" /> : <Moon className="w-5 h-5 sm:w-6 sm:h-6" />}
+             </div>
+             <div className="flex flex-col flex-1 min-w-0 pr-10 sm:pr-0">
+               <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{title}</span>
+               <span className="text-sm sm:text-lg font-black uppercase font-display tracking-tighter text-slate-800 break-words leading-tight">{log.operatorName}</span>
+             </div>
+           </div>
         </div>
 
-        <div className="bg-[#ffafcc]/10 p-8 rounded-[3rem] border border-white/60 shadow-soft-sm group-hover:bg-white transition-colors duration-500 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-3 h-6 rounded-full bg-[#ffafcc]/40" />
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Cycles</p>
-            </div>
-            <span className="text-2xl font-black text-slate-800 font-mono tracking-tighter">{log.frame}</span>
+        <div className="flex flex-col gap-2 sm:gap-3 relative z-10">
+          <div className="bg-white/60 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-1 border border-white/40 shadow-soft-sm">
+             <span className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Design Name</span>
+             <span className="text-xs sm:text-sm font-black w-full break-words text-slate-800 leading-tight">{log.designName}</span>
           </div>
-          <div className="flex items-center justify-between pt-6 border-t border-white/60">
-            <div className="flex items-center gap-4">
-              <div className="w-3 h-6 rounded-full bg-emerald-200" />
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Net Dist.</p>
+          
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="bg-white/60 p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-white/40 items-center justify-center text-center shadow-soft-sm min-h-[4rem]">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Design Stitches</span>
+              <span className="text-xs sm:text-sm font-black font-mono text-slate-800">{log.designStitch.toLocaleString()}</span>
             </div>
-            <span className="text-2xl font-black text-emerald-600 font-mono tracking-tighter">{log.totalMeters}m</span>
+            <div className="bg-white/60 p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-white/40 items-center justify-center text-center shadow-soft-sm min-h-[4rem]">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Frame</span>
+              <span className="text-xs sm:text-sm font-black font-mono text-slate-800">{log.frame}</span>
+            </div>
+            <div className="bg-white/60 p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-white/40 items-center justify-center text-center shadow-soft-sm col-span-2">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Meters</span>
+              <span className="text-sm sm:text-base font-black font-mono text-emerald-600">{log.totalMeters}m</span>
+            </div>
           </div>
-        </div>
 
-        <div className={cn(
-          "col-span-2 p-14 rounded-[4rem] border-none flex flex-col items-center justify-center relative overflow-hidden group/metric transition-all duration-700 bg-white soft-inset",
-        )}>
-          <p className="text-[14px] font-black text-slate-400 uppercase tracking-[0.6em] mb-8 relative z-10">Telemetry Output</p>
-          <div className="flex items-center gap-10 relative z-10">
-            <div className={cn(
-              "text-7xl sm:text-9xl font-black font-display tracking-tighter",
-              isWinner ? "text-emerald-500" : isLoser ? "text-rose-400" : "text-slate-700"
-            )}>
-              {log.totalStitches.toLocaleString()}
-            </div>
-            <div className={cn(
-              "w-20 h-20 rounded-[2.5rem] flex items-center justify-center shadow-soft bg-white",
-              isWinner ? "text-emerald-500" :
-              isLoser ? "text-rose-400" : "text-indigo-400"
-            )}>
-              <Activity className="w-10 h-10" />
-            </div>
-          </div>
-          <div className="mt-10 flex items-center gap-8">
-            <span className="w-16 h-0.5 bg-slate-100" />
-            <span className="text-[12px] font-bold text-slate-300 uppercase tracking-[0.5em] italic">Nexus Synched</span>
-            <span className="w-16 h-0.5 bg-slate-100" />
+          <div className="bg-white p-3 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center gap-1.5 border border-slate-100 shadow-sm mt-1">
+             <span className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none text-center">Total Stitch</span>
+             <span className={cn(
+               "text-xl sm:text-4xl font-black font-display tracking-tighter leading-tight text-center break-all w-full",
+               isWinner ? "text-emerald-500" : isLoser ? "text-rose-500" : "text-indigo-600"
+             )}>{log.totalStitches.toLocaleString()}</span>
           </div>
         </div>
       </div>

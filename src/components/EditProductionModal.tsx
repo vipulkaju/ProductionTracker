@@ -86,7 +86,7 @@ export function EditProductionModal({ isOpen, onClose, onUpdate, record }: EditP
 
             <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto scrollbar-hide">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <FormGroup label="Field operator" icon={User}>
+                 <FormGroup label="Operator Name" icon={User}>
                   <input 
                     name="operatorName" 
                     required 
@@ -96,7 +96,7 @@ export function EditProductionModal({ isOpen, onClose, onUpdate, record }: EditP
                   />
                 </FormGroup>
 
-                <FormGroup label="Head" icon={FileText}>
+                <FormGroup label="Design Name" icon={FileText}>
                   <input 
                     name="designName" 
                     required 
@@ -107,19 +107,19 @@ export function EditProductionModal({ isOpen, onClose, onUpdate, record }: EditP
                 </FormGroup>
 
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 p-6 soft-card border border-white">
-                  <FormGroup label="Tich Count" icon={Activity}>
+                  <FormGroup label="Design Stitches" icon={Activity}>
                     <input name="designStitch" type="number" required value={formData.designStitch} onChange={handleChange} className="form-input-premium" />
                   </FormGroup>
 
-                  <FormGroup label="Frame Rotation" icon={Hash}>
+                  <FormGroup label="Total Frame" icon={Hash}>
                     <input name="frame" type="number" required value={formData.frame} onChange={handleChange} className="form-input-premium" />
                   </FormGroup>
 
-                  <FormGroup label="Distance (m)" icon={Hash}>
+                  <FormGroup label="Total Meters" icon={Hash}>
                     <input name="totalMeters" type="number" step="0.01" required value={formData.totalMeters} onChange={handleChange} className="form-input-premium" />
                   </FormGroup>
 
-                  <FormGroup label="Gross Production" icon={Activity}>
+                  <FormGroup label="Total Stitch" icon={Activity}>
                     <input name="totalStitches" type="number" required value={formData.totalStitches} onChange={handleChange} className="form-input-premium !border-blue-200 !bg-blue-50/50 text-blue-600 focus:!border-blue-300 shadow-none font-black" />
                   </FormGroup>
                 </div>

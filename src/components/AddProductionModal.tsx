@@ -209,7 +209,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                         />
                       </FormGroup>
 
-                      <FormGroup label="design Name" icon={FileText}>
+                      <FormGroup label="Design Name" icon={FileText}>
                         <input 
                           name="designName" 
                           required 
