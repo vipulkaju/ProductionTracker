@@ -327,7 +327,7 @@ export default function App() {
         currentView === 'dashboard' && !selectedMachine ? "max-w-none" : "max-w-[1600px]"
       )}>
         <main className={cn(
-          "flex-1 scroll-smooth h-full",
+          "flex-1 scroll-smooth flex flex-col min-h-0",
           currentView === 'dashboard' && !selectedMachine ? "p-0" : "p-4 sm:p-12 space-y-12"
         )}>
           <AnimatePresence mode="wait">
@@ -508,18 +508,18 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
   onFilterChange: (f: string) => void,
   onAdd: () => void,
   onLogout: () => void,
-  currentView: 'dashboard' | 'whatsapp' | 'machines',
-  onViewChange: (v: 'dashboard' | 'whatsapp' | 'machines') => void
+  currentView: 'dashboard' | 'whatsapp',
+  onViewChange: (v: 'dashboard' | 'whatsapp') => void
 }) {
   return (
-    <div className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-max">
-      <div className="bg-white/90 backdrop-blur-xl p-2.5 rounded-[2rem] shadow-xl flex items-center gap-2 border border-white/60">
+    <div className="sm:hidden fixed bottom-2 sm:bottom-8 left-1/2 -translate-x-1/2 z-[60] w-max">
+      <div className="bg-[#f6efe9] p-2 rounded-full shadow-soft flex items-center gap-2 border border-white/60">
         <button
           type="button"
           onClick={() => onViewChange('dashboard')}
           className={cn(
             "w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all",
-            currentView === 'dashboard' ? "bg-slate-800 text-white shadow-md" : "text-slate-500 hover:text-slate-800 bg-transparent"
+            currentView === 'dashboard' ? "shadow-soft-inset text-blue-500" : "shadow-soft text-slate-500 hover:text-slate-800"
           )}
         >
           <Activity className="w-5 h-5" />
@@ -529,7 +529,7 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
           onClick={() => onViewChange('machines')}
           className={cn(
             "w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all",
-            currentView === 'machines' ? "bg-slate-800 text-white shadow-md" : "text-slate-500 hover:text-slate-800 bg-transparent"
+            currentView === 'machines' ? "shadow-soft-inset text-blue-500" : "shadow-soft text-slate-500 hover:text-slate-800"
           )}
         >
           <LayoutDashboard className="w-5 h-5" />
@@ -539,7 +539,7 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
           onClick={() => onViewChange('whatsapp')}
           className={cn(
             "w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all",
-            currentView === 'whatsapp' ? "bg-slate-800 text-white shadow-md" : "text-slate-500 hover:text-slate-800 bg-transparent"
+            currentView === 'whatsapp' ? "shadow-soft-inset text-blue-500" : "shadow-soft text-slate-500 hover:text-slate-800"
           )}
         >
           <BookOpen className="w-5 h-5" />
@@ -547,14 +547,14 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
         <button
           type="button"
           onClick={onAdd}
-          className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50"
+          className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset"
         >
           <PenLine className="w-5 h-5" />
         </button>
         <button
           type="button"
           onClick={onLogout}
-          className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all text-rose-500 hover:text-rose-600 hover:bg-rose-50"
+          className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset text-rose-500"
         >
           <User className="w-5 h-5" />
         </button>

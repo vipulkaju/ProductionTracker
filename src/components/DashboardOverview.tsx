@@ -95,7 +95,7 @@ export function DashboardOverview({ items, user, onMachineSelect }: DashboardOve
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="h-full w-full flex flex-col relative overflow-hidden bg-[#f4f6f8]"
+      className="flex-1 w-full flex flex-col relative overflow-y-auto overflow-x-hidden bg-[#f4f6f8]"
     >
       {/* Background glow blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -118,7 +118,7 @@ export function DashboardOverview({ items, user, onMachineSelect }: DashboardOve
         </svg>
       </div>
 
-      <div className="relative z-10 flex flex-col h-full p-6 sm:p-12 w-full max-w-[1600px] mx-auto">
+      <div className="relative z-10 flex flex-col min-h-full p-6 pb-28 sm:p-12 w-full max-w-[1600px] mx-auto">
           {/* Header */}
           <div className="flex justify-between items-start w-full">
              <div>
@@ -169,11 +169,17 @@ export function DashboardOverview({ items, user, onMachineSelect }: DashboardOve
 
           {/* Bottom Operator Bar */}
           <div className="mt-auto pt-6 sm:pt-10">
-             <div
-               className="relative z-20 pointer-events-auto w-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-[2rem] p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 shadow-[0_8px_30px_rgba(0,0,0,0.03)]"
+             <button
+               onClick={(e) => {
+                 e.stopPropagation();
+                 if (topOperator && onMachineSelect) {
+                   onMachineSelect(topOperator.machineId);
+                 }
+               }}
+               className="relative z-20 pointer-events-auto w-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-[2rem] p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 hover:bg-white/60 active:scale-[0.98] transition-all cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.03)] group"
              >
                <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto">
-                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/60 backdrop-blur-xl border border-white flex items-center justify-center shrink-0 shadow-sm">
+                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/60 backdrop-blur-xl border border-white flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
                    <Trophy className="w-5 h-5 sm:w-7 sm:h-7 text-slate-600" strokeWidth={1.2} />
                  </div>
                  <div className="text-left flex-1">
@@ -191,8 +197,14 @@ export function DashboardOverview({ items, user, onMachineSelect }: DashboardOve
                      </span>
                      <span className="text-[9px] sm:text-[10px] font-medium text-slate-400 uppercase tracking-[0.2em] mt-1.5 sm:mt-2">Stitches</span>
                   </div>
+                  
+                  {topOperator && (
+                    <div className="w-10 h-10 rounded-full bg-slate-800 text-white flex items-center justify-center shrink-0 group-hover:bg-slate-700 transition-colors">
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  )}
                </div>
-             </div>
+             </button>
           </div>
       </div>
     </motion.div>
