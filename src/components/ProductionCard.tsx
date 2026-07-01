@@ -144,35 +144,41 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
                     reportStatus === 'PARTIAL' ? "bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]" : 
                     "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"
                   )} />
-                  <span className="font-display font-black text-slate-800 text-[16px] leading-[18px] sm:text-3xl tracking-tighter sm:leading-none break-all">
+                  <span className="font-display font-black text-slate-800 text-[20px] leading-[22px] sm:text-3xl tracking-tighter sm:leading-none break-all">
                     {item.id}
                   </span>
                 </div>
               </div>
               
-              <div className="flex items-center gap-1.5 ml-4 sm:ml-5">
+              <div className="flex items-center gap-1.5 ml-4 sm:ml-5 mt-1 sm:mt-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#ffafcc] shrink-0" />
-                <span className="text-[8px] sm:text-[11px] font-black text-slate-400 uppercase tracking-widest break-words">{item.name}</span>
+                <span className="text-[10px] sm:text-[11px] font-black text-slate-400 uppercase tracking-widest break-words">{item.name}</span>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 shrink-0">
-            <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
-               <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
+            <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-20 sm:h-24">
+               <p className="text-slate-400 text-[9px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
                 Qty
               </p>
-               <span className="text-xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none">
+               <span className="text-2xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none">
                  {item.quantity}
                </span>
             </div>
             
-            <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
-              <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
-                Head
+            <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-20 sm:h-24">
+              <p className="text-slate-400 text-[9px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
+                {item.machineArea ? (item.machineHead ? "Area / Head" : "Area") : "Lead"}
               </p>
-               <span className="text-xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none text-center">
-                 {item.machineHead ? `H${item.machineHead}` : '-'}
+               <span className="text-xl sm:text-2xl font-black text-slate-700 font-display truncate leading-none flex items-center gap-1.5 w-full justify-center">
+                 <span className="truncate">{item.machineArea || (item.assignedTo && item.assignedTo.split(' ')[0])}</span>
+                 {item.machineArea && item.machineHead && (
+                   <>
+                     <span className="text-slate-300 shrink-0">/</span>
+                     <span className="text-indigo-500 shrink-0">H{item.machineHead}</span>
+                   </>
+                 )}
                </span>
             </div>
           </div>

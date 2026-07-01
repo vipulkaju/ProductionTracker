@@ -129,11 +129,6 @@ export function WhatsAppReport({ user, onMachineSelect }: WhatsAppReportProps) {
     return encodeURIComponent(message);
   };
 
-  const handleShare = () => {
-    const waUrl = `https://wa.me/?text=${generateWhatsAppMessage()}`;
-    window.open(waUrl, '_blank');
-  };
-
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
@@ -157,13 +152,23 @@ export function WhatsAppReport({ user, onMachineSelect }: WhatsAppReportProps) {
             />
           </div>
           
-          <button 
-            onClick={handleShare}
-            disabled={loading || reports.length === 0}
-            className="w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] shrink-0 pill-button rounded-full flex items-center justify-center disabled:opacity-50 disabled:grayscale transition-all text-emerald-500"
-          >
-            <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
-          </button>
+          {loading || reports.length === 0 ? (
+            <button 
+              disabled
+              className="w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] shrink-0 pill-button rounded-full flex items-center justify-center disabled:opacity-50 disabled:grayscale transition-all text-emerald-500"
+            >
+              <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+            </button>
+          ) : (
+            <a 
+              href={`https://wa.me/?text=${generateWhatsAppMessage()}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] shrink-0 pill-button rounded-full flex items-center justify-center transition-all text-emerald-500 hover:scale-105 active:scale-95"
+            >
+              <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+            </a>
+          )}
         </div>
       </div>
 
@@ -180,17 +185,17 @@ export function WhatsAppReport({ user, onMachineSelect }: WhatsAppReportProps) {
               whileHover={{ y: -10 }}
               onClick={() => onMachineSelect && onMachineSelect(report.machine.id)}
               className={cn(
-                "soft-card p-10 space-y-8 border border-white transition-all duration-500 group relative",
+                "soft-card p-6 sm:p-10 space-y-6 sm:space-y-8 border border-white transition-all duration-500 group relative",
                 onMachineSelect ? "cursor-pointer" : ""
               )}
             >
-              <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
-                <div className="w-14 h-14 pill-button rounded-full flex items-center justify-center text-slate-400 transition-transform duration-500 shrink-0">
-                  <Box className="w-6 h-6" />
+              <div className="flex items-center gap-4 sm:gap-6 border-b border-slate-50 pb-6 sm:pb-8">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 pill-button rounded-full flex items-center justify-center text-slate-400 transition-transform duration-500 shrink-0">
+                  <Box className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-black text-slate-800 uppercase font-display leading-tight tracking-tight break-words">{report.machine.name.toUpperCase().startsWith('MACHINE') ? report.machine.name : `MACHINE ${report.machine.name}`}</h3>
-                  <div className="flex flex-wrap items-center gap-3 mt-3">
+                  <h3 className="text-lg sm:text-xl font-black text-slate-800 uppercase font-display leading-tight tracking-tight break-words">{report.machine.name.toUpperCase().startsWith('MACHINE') ? report.machine.name : `MACHINE ${report.machine.name}`}</h3>
+                  <div className="flex flex-wrap items-center gap-3 mt-2 sm:mt-3">
                     <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] bg-[#bde0fe]/30 px-4 py-1.5 rounded-full shrink-0">
                       {report.machine.machineArea ? `AREA ${report.machine.machineArea}` : report.machine.category}
                       {report.machine.machineArea && report.machine.machineHead && ` / HEAD ${report.machine.machineHead}`}

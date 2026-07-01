@@ -20,7 +20,8 @@ import {
   Home,
   BookOpen,
   PenLine,
-  User
+  User,
+  Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductionItem, ProductionStatus, ProductionRecord } from './types';
@@ -29,6 +30,7 @@ import { ProductionCard } from './components/ProductionCard';
 import { AddMachineModal } from './components/AddMachineModal';
 import { MachineDetail } from './components/MachineDetail';
 import { WhatsAppReport } from './components/WhatsAppReport';
+import { DashboardOverview } from './components/DashboardOverview';
 import { ConfirmationModal } from './components/ConfirmationModal';
 import { EditMachineModal } from './components/EditMachineModal';
 import { cn } from './lib/utils';
@@ -58,7 +60,8 @@ export default function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [itemToDelete, setItemToDelete] = useState<ProductionItem | null>(null);
   const [itemToEdit, setItemToEdit] = useState<ProductionItem | null>(null);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'whatsapp'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'machines' | 'whatsapp'>('dashboard');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -116,9 +119,11 @@ export default function App() {
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       const matchesFilter = filter === "ALL" || item.status === filter;
-      return matchesFilter;
+      const matchesSearch = item.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesFilter && matchesSearch;
     });
-  }, [items, filter]);
+  }, [items, filter, searchTerm]);
 
   const handleAddItem = async (newItem: ProductionItem) => {
     if (!user) return;
@@ -257,12 +262,12 @@ export default function App() {
           <motion.div 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="w-12 h-12 sm:w-24 sm:h-24 bg-[#f6efe9] shadow-soft rounded-[1.2rem] sm:rounded-[2.5rem] flex items-center justify-center border border-white/40 shrink-0"
+            className="w-10 h-10 sm:w-24 sm:h-24 bg-[#f6efe9] shadow-soft rounded-[1rem] sm:rounded-[2.5rem] flex items-center justify-center border border-white/40 shrink-0"
           >
-            <Box className="w-6 h-6 sm:w-14 sm:h-14 text-[#ffafcc]" />
+            <Box className="w-5 h-5 sm:w-14 sm:h-14 text-[#ffafcc]" />
           </motion.div>
           <div className="flex flex-col min-w-0">
-            <h1 className="text-xl sm:text-6xl font-black font-display tracking-tighter leading-none flex flex-wrap">
+            <h1 className="text-[26px] sm:text-6xl font-black font-display tracking-tighter leading-none flex flex-wrap">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500">Production</span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">Tracker</span>
             </h1>
@@ -274,6 +279,13 @@ export default function App() {
             <NavButton 
               active={currentView === 'dashboard'} 
               onClick={() => { setCurrentView('dashboard'); setSelectedMachineId(null); }}
+              icon={Activity}
+              label="Overview"
+              color="indigo"
+            />
+            <NavButton 
+              active={currentView === 'machines'} 
+              onClick={() => { setCurrentView('machines'); setSelectedMachineId(null); }}
               icon={LayoutDashboard}
               label="Fleet"
               color="indigo"
@@ -310,8 +322,14 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col w-full max-w-[1600px] mx-auto">
-        <main className="flex-1 p-4 sm:p-12 space-y-12 scroll-smooth">
+      <div className={cn(
+        "flex-1 flex flex-col w-full mx-auto",
+        currentView === 'dashboard' && !selectedMachine ? "max-w-none" : "max-w-[1600px]"
+      )}>
+        <main className={cn(
+          "flex-1 scroll-smooth h-full",
+          currentView === 'dashboard' && !selectedMachine ? "p-0" : "p-4 sm:p-12 space-y-12"
+        )}>
           <AnimatePresence mode="wait">
             {selectedMachine ? (
               <MachineDetail 
@@ -327,9 +345,19 @@ export default function App() {
                 user={user}
                 onMachineSelect={(id) => setSelectedMachineId(id)}
               />
+            ) : currentView === 'dashboard' ? (
+              <DashboardOverview 
+                key="overview" 
+                items={items} 
+                user={user} 
+                onMachineSelect={(id) => {
+                  setSelectedMachineId(id);
+                  setCurrentView('dashboard'); // keep view dashboard but since selectedMachineId is set, it will show detail
+                }}
+              />
             ) : (
               <motion.div 
-                key="dashboard"
+                key="machines"
                 initial="hidden"
                 animate="visible"
                 exit="exit"
@@ -344,14 +372,26 @@ export default function App() {
                 className="space-y-12"
               >
                 {/* Hero Section */}
-                <section className="sm:space-y-10">
-                  <div className="hidden sm:flex flex-col sm:flex-row sm:items-end justify-end gap-12">
+                <section className="space-y-6 sm:space-y-10">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-12 w-full">
+                    <div className="relative flex-1 w-full max-w-md">
+                      <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                        <Search className="h-5 w-5 text-slate-400" />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Search assets..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="block w-full pl-12 pr-4 py-4 sm:py-5 border-0 rounded-[2rem] bg-white text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-blue-500/20 shadow-soft font-display font-medium text-sm sm:text-base transition-all"
+                      />
+                    </div>
                     
                     <button 
                       onClick={() => setIsModalOpen(true)}
-                      className="w-full sm:w-auto px-12 py-6 text-indigo-900 bg-gradient-to-tr from-[#bdfedb] via-[#bde0fe] to-[#ffafcc] rounded-full shadow-lg shadow-blue-500/20 font-black text-xs uppercase tracking-[0.5em] flex items-center justify-center gap-4 group hover:scale-105 active:scale-95 transition-all"
+                      className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 text-indigo-900 bg-gradient-to-tr from-[#bdfedb] via-[#bde0fe] to-[#ffafcc] rounded-full shadow-lg shadow-blue-500/20 font-black text-[10px] sm:text-xs uppercase tracking-[0.3em] sm:tracking-[0.5em] flex items-center justify-center gap-3 sm:gap-4 group hover:scale-105 active:scale-95 transition-all shrink-0"
                     >
-                      <Plus className="w-8 h-8 transition-transform group-hover:rotate-180 duration-700" />
+                      <Plus className="w-6 h-6 sm:w-8 sm:h-8 transition-transform group-hover:rotate-180 duration-700" />
                       <span>Deploy New Asset</span>
                     </button>
                   </div>
@@ -377,7 +417,7 @@ export default function App() {
                       }}
                       initial="hidden"
                       animate="show"
-                      className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8 pb-32"
+                      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8 pb-32"
                     >
                       <AnimatePresence>
                         {filteredItems.map((item) => (
@@ -468,45 +508,55 @@ function MobileNavigation({ currentView, onViewChange, onAdd, onLogout }: {
   onFilterChange: (f: string) => void,
   onAdd: () => void,
   onLogout: () => void,
-  currentView: 'dashboard' | 'whatsapp',
-  onViewChange: (v: 'dashboard' | 'whatsapp') => void
+  currentView: 'dashboard' | 'whatsapp' | 'machines',
+  onViewChange: (v: 'dashboard' | 'whatsapp' | 'machines') => void
 }) {
   return (
-    <div className="sm:hidden fixed bottom-2 sm:bottom-8 left-1/2 -translate-x-1/2 z-[60] w-max">
-      <div className="bg-[#f6efe9] p-2 rounded-full shadow-soft flex items-center gap-2 border border-white/60">
+    <div className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-max">
+      <div className="bg-white/90 backdrop-blur-xl p-2.5 rounded-[2rem] shadow-xl flex items-center gap-2 border border-white/60">
         <button
           type="button"
           onClick={() => onViewChange('dashboard')}
           className={cn(
-            "w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all",
-            currentView === 'dashboard' ? "shadow-soft-inset text-blue-500" : "shadow-soft text-slate-500 hover:text-slate-800"
+            "w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all",
+            currentView === 'dashboard' ? "bg-slate-800 text-white shadow-md" : "text-slate-500 hover:text-slate-800 bg-transparent"
           )}
         >
-          <Home className="w-4 h-4" />
+          <Activity className="w-5 h-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => onViewChange('machines')}
+          className={cn(
+            "w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all",
+            currentView === 'machines' ? "bg-slate-800 text-white shadow-md" : "text-slate-500 hover:text-slate-800 bg-transparent"
+          )}
+        >
+          <LayoutDashboard className="w-5 h-5" />
         </button>
         <button
           type="button"
           onClick={() => onViewChange('whatsapp')}
           className={cn(
-            "w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all",
-            currentView === 'whatsapp' ? "shadow-soft-inset text-blue-500" : "shadow-soft text-slate-500 hover:text-slate-800"
+            "w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all",
+            currentView === 'whatsapp' ? "bg-slate-800 text-white shadow-md" : "text-slate-500 hover:text-slate-800 bg-transparent"
           )}
         >
-          <BookOpen className="w-4 h-4" />
+          <BookOpen className="w-5 h-5" />
         </button>
         <button
           type="button"
           onClick={onAdd}
-          className="w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset"
+          className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50"
         >
-          <PenLine className="w-4 h-4" />
+          <PenLine className="w-5 h-5" />
         </button>
         <button
           type="button"
           onClick={onLogout}
-          className="w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all shadow-soft text-slate-500 hover:text-slate-800 hover:shadow-soft-inset"
+          className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center transition-all text-rose-500 hover:text-rose-600 hover:bg-rose-50"
         >
-          <User className="w-4 h-4" />
+          <User className="w-5 h-5" />
         </button>
       </div>
     </div>

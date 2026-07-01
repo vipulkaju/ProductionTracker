@@ -143,20 +143,20 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.02 }}
-      className="space-y-10 pb-12"
+      className="space-y-10 pb-32 sm:pb-12"
     >
       {/* Deep Cinematic Header Project Node */}
       <div className="bento-card p-6 sm:p-10 relative overflow-hidden group w-full flex flex-col justify-center">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full group-hover:bg-indigo-600/10 transition-colors duration-1000 translate-x-1/3 -translate-y-1/3" />
         
         {/* Middle Main Row */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-14 relative z-10 w-full py-2">
-          <h2 className="text-6xl sm:text-8xl font-black text-slate-800 font-display tracking-tighter leading-tight uppercase italic drop-shadow-sm shrink-0">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-2 sm:gap-14 relative z-10 w-full py-2">
+          <h2 className="text-5xl sm:text-8xl font-black text-slate-800 font-display tracking-tighter leading-tight uppercase italic drop-shadow-sm shrink-0">
             {item.id}
           </h2>
 
           {item.machineHead && (
-            <span className="text-5xl sm:text-7xl font-black text-indigo-500 font-display uppercase italic tracking-tighter drop-shadow-sm leading-none shrink-0">
+            <span className="text-4xl sm:text-7xl font-black text-indigo-500 font-display uppercase italic tracking-tighter drop-shadow-sm leading-none shrink-0">
               HEAD {item.machineHead}
             </span>
           )}
@@ -304,7 +304,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
                   <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-slate-100 to-transparent" />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-10">
                   <ShiftSideCard 
                     shift="DAY" 
                     log={shifts.DAY} 
@@ -425,7 +425,7 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-30 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-6 gap-8 shrink-0"
+            className="absolute inset-0 z-30 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-6 gap-4 sm:gap-8 shrink-0"
           >
             <ActionButton 
               icon={Pencil} 
