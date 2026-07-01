@@ -179,7 +179,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
             <div className="flex items-center gap-4 sm:gap-6 bg-white p-4 rounded-3xl border border-slate-100 px-6 sm:px-8 shadow-sm">
               <LegendItem color="bg-rose-500" label="Zero" />
-              <LegendItem color="bg-amber-500" label="Partial" />
+              <LegendItem color="bg-yellow-400" label="Partial" />
               <LegendItem color="bg-emerald-500" label="Saturated" />
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -235,8 +235,8 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
                 }}
                 className={cn(
                   "aspect-square rounded-xl sm:rounded-2xl items-center justify-center transition-all shadow-sm relative group cursor-pointer",
-                  day.status === 'NONE' ? "bg-slate-50 text-slate-300 border-2 border-slate-100" :
-                  day.status === 'PARTIAL' ? "bg-amber-50 text-amber-600 border-2 border-amber-200 shadow-amber-100" :
+                  day.status === 'NONE' ? "bg-rose-50 text-rose-600 border-2 border-rose-200 shadow-rose-100" :
+                  day.status === 'PARTIAL' ? "bg-yellow-50 text-yellow-600 border-2 border-yellow-200 shadow-yellow-100" :
                   "bg-emerald-50 text-emerald-600 border-2 border-emerald-200 shadow-emerald-100",
                   isHiddenOnMobile ? "hidden sm:flex" : "flex",
                   selectedDateFilter === day.dateStr ? "ring-4 ring-indigo-500 ring-offset-2 scale-110 z-10" : ""
@@ -313,6 +313,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
                     onDelete={setLogToDelete}
                     onEdit={setEditLog}
                     comparison={shifts.DAY && shifts.NIGHT ? (shifts.DAY.totalStitches >= shifts.NIGHT.totalStitches ? 'higher' : 'lower') : undefined}
+                    machineHead={item.machineHead}
                   />
                   <ShiftSideCard 
                     shift="NIGHT" 
@@ -322,6 +323,7 @@ export function MachineDetail({ item, onBack, onAddProduction, onDeleteMachine }
                     onDelete={setLogToDelete}
                     onEdit={setEditLog}
                     comparison={shifts.DAY && shifts.NIGHT ? (shifts.NIGHT.totalStitches >= shifts.DAY.totalStitches ? 'higher' : 'lower') : undefined}
+                    machineHead={item.machineHead}
                   />
                 </div>
               </div>
@@ -383,9 +385,10 @@ interface ShiftSideCardProps {
   accentColor: string;
   onDelete: (id: string) => void;
   onEdit: (record: ProductionRecord) => void;
+  machineHead?: string;
 }
 
-function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, comparison }: ShiftSideCardProps & { comparison?: 'higher' | 'lower' }) {
+function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, comparison, machineHead }: ShiftSideCardProps & { comparison?: 'higher' | 'lower' }) {
   const [showActions, setShowActions] = useState(false);
 
   if (!log) {
@@ -488,8 +491,8 @@ function ShiftSideCard({ shift, log, title, accentColor, onDelete, onEdit, compa
               <span className="text-xs sm:text-sm font-black font-mono text-slate-800">{log.designStitch.toLocaleString()}</span>
             </div>
             <div className="bg-[#ffd9e8] p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-[#ffd9e8] items-center justify-center text-center shadow-soft-sm min-h-[4rem]">
-              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Total Frame</span>
-              <span className="text-xs sm:text-sm font-black font-mono text-slate-800">{log.frame}</span>
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Head</span>
+              <span className="text-xs sm:text-sm font-black font-mono text-slate-800">{machineHead || 'N/A'}</span>
             </div>
             <div className="bg-[#dce7f9] p-2 sm:p-3 rounded-xl flex flex-col gap-1 border border-[#dce7f9] items-center justify-center text-center shadow-soft-sm col-span-2">
               <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Total Meters</span>

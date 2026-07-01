@@ -19,11 +19,12 @@ import { ProductionItem, ProductionRecord } from '../types';
 import { cn } from '../lib/utils';
 import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
-import { format, parseISO, startOfDay } from 'date-fns';
+import { format, parseISO, startOfDay, subDays } from 'date-fns';
 
 interface WhatsAppReportProps {
   user: any;
   key?: string;
+  onMachineSelect?: (id: string) => void;
 }
 
 interface MachineDailyReport {
@@ -32,8 +33,8 @@ interface MachineDailyReport {
   nightShift?: ProductionRecord;
 }
 
-export function WhatsAppReport({ user }: WhatsAppReportProps) {
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+export function WhatsAppReport({ user, onMachineSelect }: WhatsAppReportProps) {
+  const [selectedDate, setSelectedDate] = useState(format(subDays(new Date(), 1), 'yyyy-MM-dd'));
   const [loading, setLoading] = useState(false);
   const [machines, setMachines] = useState<ProductionItem[]>([]);
   const [reports, setReports] = useState<MachineDailyReport[]>([]);
@@ -96,7 +97,11 @@ export function WhatsAppReport({ user }: WhatsAppReportProps) {
     let message = `*Production Report -*\n📅${dateFormatted}\n${separator}\n`;
 
     reports.forEach((report) => {
-      message += `*Machine: ${report.machine.name} (${report.machine.category})*\n`;
+      const areaText = report.machine.machineArea ? `Area ${report.machine.machineArea}` : '';
+      const headText = report.machine.machineHead ? `Head ${report.machine.machineHead}` : '';
+      const detailText = [areaText, headText].filter(Boolean).join(' | ') || report.machine.category;
+
+      message += `*Machine: ${report.machine.name} (${detailText})*\n`;
       message += `DAY SHIFT       NIGHT SHIFT\n`;
       message += `Karigar ⬇️       Karigar ⬇️\n`;
       
@@ -173,17 +178,22 @@ export function WhatsAppReport({ user }: WhatsAppReportProps) {
             <motion.div 
               key={report.machine.id}
               whileHover={{ y: -10 }}
-              className="soft-card p-10 space-y-8 border border-white transition-all duration-500 group relative"
+              onClick={() => onMachineSelect && onMachineSelect(report.machine.id)}
+              className={cn(
+                "soft-card p-10 space-y-8 border border-white transition-all duration-500 group relative",
+                onMachineSelect ? "cursor-pointer" : ""
+              )}
             >
               <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
-                <div className="w-14 h-14 pill-button rounded-full flex items-center justify-center text-slate-400 transition-transform duration-500">
+                <div className="w-14 h-14 pill-button rounded-full flex items-center justify-center text-slate-400 transition-transform duration-500 shrink-0">
                   <Box className="w-6 h-6" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-black text-slate-800 uppercase font-display leading-none tracking-tight">{report.machine.name.toUpperCase().startsWith('MACHINE') ? report.machine.name : `MACHINE ${report.machine.name}`}</h3>
-                  <div className="flex items-center gap-3 mt-3">
-                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] bg-[#bde0fe]/30 px-4 py-1.5 rounded-full">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xl font-black text-slate-800 uppercase font-display leading-tight tracking-tight break-words">{report.machine.name.toUpperCase().startsWith('MACHINE') ? report.machine.name : `MACHINE ${report.machine.name}`}</h3>
+                  <div className="flex flex-wrap items-center gap-3 mt-3">
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] bg-[#bde0fe]/30 px-4 py-1.5 rounded-full shrink-0">
                       {report.machine.machineArea ? `AREA ${report.machine.machineArea}` : report.machine.category}
+                      {report.machine.machineArea && report.machine.machineHead && ` / HEAD ${report.machine.machineHead}`}
                     </span>
                   </div>
                 </div>
@@ -269,9 +279,9 @@ function ShiftSummary({ shift, log, icon: Icon, color }: {
       </div>
       
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-[10px] font-black text-slate-900 uppercase truncate max-w-[150px] italic">{log.designName}</p>
-          <div className="h-px flex-1 mx-4 bg-slate-100" />
+        <div className="flex flex-col gap-2">
+          <p className="text-[10px] font-black text-slate-900 uppercase break-words leading-tight italic w-full">{log.designName}</p>
+          <div className="h-px w-full bg-slate-100" />
         </div>
         
         <div className="flex items-center gap-4">

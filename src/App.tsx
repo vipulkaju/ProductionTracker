@@ -325,6 +325,7 @@ export default function App() {
               <WhatsAppReport 
                 key="whatsapp"
                 user={user}
+                onMachineSelect={(id) => setSelectedMachineId(id)}
               />
             ) : (
               <motion.div 

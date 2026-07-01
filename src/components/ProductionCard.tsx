@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ProductionItem, ProductionRecord } from "../types";
 import { StatusBadge } from "./StatusBadge";
 import { ProgressBar } from "./ProgressBar";
@@ -6,6 +6,9 @@ import { Calendar, Trash2, Plus, Pencil, History } from "lucide-react";
 import { formatDate, cn } from "../lib/utils";
 import { motion, AnimatePresence } from "motion/react";
 import { AddProductionModal } from './AddProductionModal';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { useFirebase } from '../context/FirebaseContext';
 
 interface ProductionCardProps {
   item: ProductionItem;
@@ -17,15 +20,36 @@ interface ProductionCardProps {
 }
 
 export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClick }: ProductionCardProps) {
+  const { user } = useFirebase();
   const [isProductionModalOpen, setIsProductionModalOpen] = useState(false);
   const [showActions, setShowActions] = useState(false);
+  const [reportStatus, setReportStatus] = useState<'NONE' | 'PARTIAL' | 'FULL'>('NONE');
 
-  const hasTodayEntry = () => {
-    if (!item.productionLogs || item.productionLogs.length === 0) return false;
+  useEffect(() => {
+    if (!user) return;
+    
     const tzDay = new Date();
-    const todayStr = tzDay.getFullYear() + '-' + String(tzDay.getMonth() + 1).padStart(2, '0') + '-' + String(tzDay.getDate()).padStart(2, '0');
-    return item.productionLogs.some(log => log.date === todayStr);
-  };
+    tzDay.setDate(tzDay.getDate() - 1);
+    const yesterdayStr = tzDay.getFullYear() + '-' + String(tzDay.getMonth() + 1).padStart(2, '0') + '-' + String(tzDay.getDate()).padStart(2, '0');
+    
+    const q = query(
+      collection(db, 'machines', item.id, 'logs'),
+      where('userId', '==', user.uid),
+      where('date', '==', yesterdayStr)
+    );
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (snapshot.size >= 2) {
+        setReportStatus('FULL');
+      } else if (snapshot.size === 1) {
+        setReportStatus('PARTIAL');
+      } else {
+        setReportStatus('NONE');
+      }
+    });
+    
+    return unsubscribe;
+  }, [item.id, user]);
 
   return (
     <>
@@ -116,17 +140,14 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
                 <div className="flex items-center gap-2 min-w-0 shrink-1">
                   <div className={cn(
                     "w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full shrink-0 shadow-inner mt-0.5",
-                    hasTodayEntry() ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"
+                    reportStatus === 'FULL' ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" : 
+                    reportStatus === 'PARTIAL' ? "bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]" : 
+                    "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"
                   )} />
                   <span className="font-display font-black text-slate-800 text-[16px] leading-[18px] sm:text-3xl tracking-tighter sm:leading-none break-all">
                     {item.id}
                   </span>
                 </div>
-                {item.machineHead && (
-                  <span className="shrink-0 mt-0.5 font-mono text-[8px] sm:text-xs font-black text-blue-500 bg-blue-50 shadow-soft-sm px-1.5 sm:px-2 py-0.5 rounded uppercase tracking-[0.1em] sm:tracking-widest border border-blue-100">
-                    H{item.machineHead}
-                  </span>
-                )}
               </div>
               
               <div className="flex items-center gap-1.5 ml-4 sm:ml-5">
@@ -139,19 +160,19 @@ export function ProductionCard({ item, onDelete, onEdit, onAddProduction, onClic
           <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 shrink-0">
             <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
                <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
-                {item.machineHead ? "Head" : "Qty"}
+                Qty
               </p>
                <span className="text-xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none">
-                 {item.machineHead || item.quantity}
+                 {item.quantity}
                </span>
             </div>
             
             <div className="bg-white/70 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center border border-white group-hover:bg-white transition-colors duration-500 shadow-sm relative overflow-hidden h-16 sm:h-24">
               <p className="text-slate-400 text-[8px] sm:text-[10px] uppercase font-black tracking-widest mb-1 truncate text-center">
-                {item.machineArea ? "Area" : "Lead"}
+                Head
               </p>
-               <span className="text-xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none">
-                 {item.machineArea || (item.assignedTo && item.assignedTo.split(' ')[0])}
+               <span className="text-xl sm:text-4xl font-black text-slate-700 font-display truncate leading-none text-center">
+                 {item.machineHead ? `H${item.machineHead}` : '-'}
                </span>
             </div>
           </div>
