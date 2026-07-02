@@ -107,9 +107,9 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-3xl -mr-16 -mt-16" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/30 rounded-full blur-2xl -ml-12 -mb-12" />
 
-              <div className="relative z-10 space-y-2 flex flex-col h-full">
-                <div className="flex justify-between items-start sm:block">
-                  <div className="mb-0 sm:mb-2">
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="flex justify-between items-start sm:block mb-4 sm:mb-6">
+                  <div>
                     <div className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 rounded-xl sm:rounded-2xl border border-blue-400 shadow-[0_0_30px_rgba(37,99,235,0.4)] font-black text-2xl sm:text-4xl uppercase tracking-widest text-white">
                       {machineId}
                     </div>
@@ -126,7 +126,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto sm:overflow-visible pr-2 sm:pr-0 scrollbar-hide py-1">
+                <div className="flex-1 overflow-y-auto sm:overflow-visible pr-2 sm:pr-0 scrollbar-hide">
                   <div className="p-3 sm:p-5 bg-white/30 rounded-3xl space-y-4">
                     <FormGroup label="Log Interval (Date)" icon={Calendar} isDark>
                       <input 
