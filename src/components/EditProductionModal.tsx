@@ -86,41 +86,43 @@ export function EditProductionModal({ isOpen, onClose, onUpdate, record }: EditP
 
             <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto scrollbar-hide">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <FormGroup label="Operator Name" icon={User}>
+                 <FormGroup label="Operator Name" icon={User} hideLabel>
                   <input 
                     name="operatorName" 
                     required 
                     value={formData.operatorName} 
                     onChange={handleChange} 
+                    placeholder="ENTER OPERATOR NAME"
                     className="form-input-premium" 
                   />
                 </FormGroup>
 
-                <FormGroup label="Design Name" icon={FileText}>
+                <FormGroup label="Design Name" icon={FileText} hideLabel>
                   <input 
                     name="designName" 
                     required 
                     value={formData.designName} 
                     onChange={handleChange} 
+                    placeholder="ENTER DESIGN NAME"
                     className="form-input-premium" 
                   />
                 </FormGroup>
 
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 p-6 soft-card border border-white">
-                  <FormGroup label="Design Stitches" icon={Activity}>
-                    <input name="designStitch" type="number" required value={formData.designStitch} onChange={handleChange} className="form-input-premium" />
+                  <FormGroup label="Design Stitches" icon={Activity} hideLabel>
+                    <input name="designStitch" type="number" required value={formData.designStitch || ''} onChange={handleChange} placeholder="DESIGN STITCHES" className="form-input-premium" />
                   </FormGroup>
 
-                  <FormGroup label="Total Frame" icon={Hash}>
-                    <input name="frame" type="number" required value={formData.frame} onChange={handleChange} className="form-input-premium" />
+                  <FormGroup label="Total Frame" icon={Hash} hideLabel>
+                    <input name="frame" type="number" required value={formData.frame || ''} onChange={handleChange} placeholder="TOTAL FRAME" className="form-input-premium" />
                   </FormGroup>
 
-                  <FormGroup label="Total Meters" icon={Hash}>
-                    <input name="totalMeters" type="number" step="0.01" required value={formData.totalMeters} onChange={handleChange} className="form-input-premium" />
+                  <FormGroup label="Total Meters" icon={Hash} hideLabel>
+                    <input name="totalMeters" type="number" step="0.01" required value={formData.totalMeters || ''} onChange={handleChange} placeholder="TOTAL METERS" className="form-input-premium" />
                   </FormGroup>
 
-                  <FormGroup label="Total Stitch" icon={Activity}>
-                    <input name="totalStitches" type="number" required value={formData.totalStitches} onChange={handleChange} className="form-input-premium !border-blue-200 !bg-blue-50/50 text-blue-600 focus:!border-blue-300 shadow-none font-black" />
+                  <FormGroup label="Total Stitch" icon={Activity} hideLabel>
+                    <input name="totalStitches" type="number" required value={formData.totalStitches || ''} onChange={handleChange} placeholder="TOTAL STITCH" className="form-input-premium !border-blue-200 !bg-blue-50/50 text-blue-600 focus:!border-blue-300 shadow-none font-black" />
                   </FormGroup>
                 </div>
               </div>
@@ -141,12 +143,12 @@ export function EditProductionModal({ isOpen, onClose, onUpdate, record }: EditP
   );
 }
 
-function FormGroup({ label, children, icon: Icon }: { label: string, children: React.ReactNode, icon: any }) {
+function FormGroup({ label, children, icon: Icon, hideLabel = false }: { label: string, children: React.ReactNode, icon: any, hideLabel?: boolean }) {
   return (
     <div className="space-y-2 flex flex-col">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{label}</label>
+      {!hideLabel && <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{label}</label>}
       <div className="relative">
-        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none" />
         {children}
       </div>
     </div>

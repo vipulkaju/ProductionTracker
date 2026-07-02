@@ -102,23 +102,20 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
             className="soft-card w-full max-w-5xl overflow-hidden flex flex-col sm:flex-row max-h-[95vh] sm:max-h-[85vh] relative"
           >
             {/* Sidebar with Date & Shift selection */}
-            <div className="w-full sm:w-80 bg-[#bde0fe] text-blue-900 p-6 sm:p-10 shrink-0 flex flex-col relative overflow-hidden border-b sm:border-b-0 sm:border-r border-white/40">
+            <div className="w-full sm:w-80 bg-[#bde0fe] text-blue-900 p-5 sm:p-6 shrink-0 flex flex-col relative overflow-hidden border-b sm:border-b-0 sm:border-r border-white/40">
               {/* Decorative Background Elements */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-3xl -mr-16 -mt-16" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/30 rounded-full blur-2xl -ml-12 -mb-12" />
 
-              <div className="relative z-10 space-y-8 flex flex-col h-full">
+              <div className="relative z-10 space-y-2 flex flex-col h-full">
                 <div className="flex justify-between items-start sm:block">
-                  <div>
-                    <h2 className="text-2xl sm:text-4xl font-black font-display tracking-tight leading-none italic uppercase">
-                      Entry <span className="text-indigo-400">Node</span>
-                    </h2>
-                    <div className="flex items-center gap-2 mt-2 sm:mt-4">
-                      <div className="px-2 sm:px-3 py-1 bg-white/10 rounded-lg border border-white/10 font-black text-[9px] sm:text-[11px] uppercase tracking-widest text-indigo-300">
-                        {machineId}
-                      </div>
-                      <div className="h-1 w-1 rounded-full bg-slate-700" />
-                      <div className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] hidden xs:block">Global Registry</div>
+                  <div className="mb-0 sm:mb-2">
+                    <div className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 rounded-xl sm:rounded-2xl border border-blue-400 shadow-[0_0_30px_rgba(37,99,235,0.4)] font-black text-2xl sm:text-4xl uppercase tracking-widest text-white">
+                      {machineId}
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                      <div className="text-[10px] sm:text-xs font-black text-blue-800 uppercase tracking-[0.2em]">Global Registry</div>
                     </div>
                   </div>
                   <button 
@@ -129,8 +126,8 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                   </button>
                 </div>
 
-                <div className="space-y-6 sm:space-y-8 flex-1 overflow-y-auto sm:overflow-visible pr-2 sm:pr-0 scrollbar-hide py-2">
-                  <div className="p-4 sm:p-6 bg-white/30 rounded-3xl space-y-6">
+                <div className="flex-1 overflow-y-auto sm:overflow-visible pr-2 sm:pr-0 scrollbar-hide py-1">
+                  <div className="p-3 sm:p-5 bg-white/30 rounded-3xl space-y-4">
                     <FormGroup label="Log Interval (Date)" icon={Calendar} isDark>
                       <input 
                         name="date" 
@@ -177,19 +174,19 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
 
             {/* Main Form Content */}
             <div className={cn(
-              "flex-1 p-6 sm:p-14 overflow-y-auto w-full scrollbar-hide relative pb-28 sm:pb-14 transition-all duration-700 bg-[#f6efe9]"
+              "flex-1 p-4 sm:p-6 overflow-y-auto w-full scrollbar-hide relative pb-28 sm:pb-8 transition-all duration-700 bg-[#f6efe9]"
             )}>
               <button 
                 onClick={onClose}
-                className="hidden sm:flex absolute top-8 right-8 p-4 pill-button rounded-2xl hover:text-rose-500 transition-all text-slate-400 active:scale-90 group"
+                className="hidden sm:flex absolute top-6 right-6 p-4 pill-button rounded-2xl hover:text-rose-500 transition-all text-slate-400 active:scale-90 group"
               >
                 <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" />
               </button>
               
-              <form onSubmit={handleSubmit} className="space-y-10 sm:space-y-12">
-                <div className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+                <div className="space-y-3">
                   {/* Section: Identity */}
-                  <div className="space-y-6">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
                         <User className="w-4 h-4" />
@@ -197,8 +194,8 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                       <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">Identity Profile</h3>
                     </div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <FormGroup label="Operator Name" icon={User}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      <FormGroup label="Operator Name" icon={User} hideLabel>
                         <input 
                           name="operatorName" 
                           required 
@@ -209,7 +206,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                         />
                       </FormGroup>
 
-                      <FormGroup label="Design Name" icon={FileText}>
+                      <FormGroup label="Design Name" icon={FileText} hideLabel>
                         <input 
                           name="designName" 
                           required 
@@ -223,7 +220,7 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                   </div>
 
                   {/* Section: Metrics */}
-                  <div className="space-y-6 pt-6 sm:pt-8">
+                  <div className="space-y-2 pt-1 sm:pt-2">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-100">
                         <Activity className="w-4 h-4" />
@@ -231,50 +228,54 @@ export function AddProductionModal({ isOpen, onClose, onAdd, machineId, frameMet
                       <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">Production Metrics</h3>
                     </div>
 
-                    <div className="soft-card p-6 sm:p-10 shadow-soft border border-white">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
-                        <div className="space-y-6">
-                          <FormGroup label="Design Stitches" icon={Activity}>
+                    <div className="soft-card p-4 sm:p-6 shadow-soft border border-white">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
+                        <div className="space-y-3">
+                          <FormGroup label="Design Stitches" icon={Activity} hideLabel>
                             <input 
                               name="designStitch" 
                               type="number" 
                               required 
-                              value={shiftsData[currentShift].designStitch ?? 0} 
+                              value={shiftsData[currentShift].designStitch || ''} 
                               onChange={handleChange} 
+                              placeholder="DESIGN STITCHES"
                               className="form-input-premium" 
                             />
                           </FormGroup>
-                          <FormGroup label="Total Frame" icon={Hash}>
+                          <FormGroup label="Total Frame" icon={Hash} hideLabel>
                             <input 
                               name="frame" 
                               type="number" 
                               required 
-                              value={shiftsData[currentShift].frame ?? 0} 
+                              value={shiftsData[currentShift].frame || ''} 
                               onChange={handleChange} 
+                              placeholder="TOTAL FRAME"
                               className="form-input-premium" 
                             />
                           </FormGroup>
                         </div>
                         
-                        <div className="space-y-6">
-                          <FormGroup label="Total Meters" icon={Plus}>
+                        <div className="space-y-3">
+                          <FormGroup label="Total Meters" icon={Plus} hideLabel>
                             <input 
                               name="totalMeters" 
                               type="number" 
                               step="0.01" 
                               required 
-                              value={shiftsData[currentShift].totalMeters ?? 0} 
+                              value={shiftsData[currentShift].totalMeters || ''} 
                               onChange={handleChange} 
+                              placeholder="TOTAL METERS"
                               className="form-input-premium" 
                             />
                           </FormGroup>
-                          <FormGroup label="Total Stitch" icon={Activity}>
+                          <FormGroup label="Total Stitch" icon={Activity} hideLabel>
                             <input 
                               name="totalStitches" 
                               type="number" 
                               required 
-                              value={shiftsData[currentShift].totalStitches ?? 0} 
+                              value={shiftsData[currentShift].totalStitches || ''} 
                               onChange={handleChange} 
+                              placeholder="TOTAL STITCH"
                               className="form-input-premium !border-blue-200 !bg-blue-50/50 text-blue-600 focus:!border-blue-300 shadow-none" 
                             />
                           </FormGroup>
@@ -327,10 +328,10 @@ function ShiftToggle({ active, onClick, icon: Icon, label, color }: { active: bo
   );
 }
 
-function FormGroup({ label, children, icon: Icon, isDark = false }: { label: string, children: React.ReactNode, icon?: any, isDark?: boolean }) {
+function FormGroup({ label, children, icon: Icon, isDark = false, hideLabel = false }: { label: string, children: React.ReactNode, icon?: any, isDark?: boolean, hideLabel?: boolean }) {
   return (
     <div className="space-y-2 flex flex-col">
-      <label className={cn("text-[10px] font-black uppercase tracking-widest ml-2", isDark ? "text-slate-500" : "text-slate-400")}>{label}</label>
+      {!hideLabel && <label className={cn("text-[10px] font-black uppercase tracking-widest ml-2", isDark ? "text-slate-500" : "text-slate-400")}>{label}</label>}
       <div className="relative">
         {Icon && (
           <div className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none", isDark ? "text-slate-500" : "text-slate-300")}>
